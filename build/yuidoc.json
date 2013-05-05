@@ -1,0 +1,11 @@
+{
+  "name": "BoxledJS",
+  "url": "www.indiegamr.com",
+  "version": "0.1.0",
+  "options": {
+    "paths": [ "../src" ],
+    "outdir": "../docs",
+    "themedir": "./yuidoc/yuidoc-bootstrap-theme",
+    "helpers": ["./yuidoc/yuidoc-bootstrap-theme/helpers/helpers.js"]
+  }
+}

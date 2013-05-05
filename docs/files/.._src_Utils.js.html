@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>..\src\Utils.js - BoxledJS</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap-responsive.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+        
+	    <img alt="BoxledJS" src="../assets/css/logo.png" style="max-height: 65%;" title="BoxledJS">
+        
+            BoxledJS
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.1.0</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Map"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+	    <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-tabs" style="margin-bottom:0;">
+            <li class="active"><a href="#classes" data-toggle="tab">Classes</a></li>
+            <li><a href="#modules" data-toggle="tab">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" placeholder="Type to filter APIs">
+        </div>
+
+        <div class="tab-content" style="border: 1px solid #DDD; border-top:0;">
+            <div class="tab-pane active" id="classes">
+                <ul id="api-classes" class="nav nav-list">
+                    
+                        <li><a href="../classes/Map.html">Map</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="tab-pane" id="modules">
+                <ul id="api-modules" class="nav nav-list">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        <div class="span9">
+                <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+    <h1>..\src\Utils.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
+var boxledjs = boxledjs || {};
+
+(function(scope) {
+  Utils = new Object();
+
+  Math.seed = 0;
+  Math.seededRandom = function(max,min) {
+    max = max || 1;
+    min = min || 0;
+
+    Math.seed = (Math.seed*9301+49297) % 233280;
+    var rnd = Math.seed / 233280.0;
+
+    return min + rnd * (max-min);
+  }
+
+  Utils.snapValue = function(value,snap)
+  {
+    var roundedSnap = (value/snap + (value &gt; 0 ? .5 : -.5)) | 0;
+    return roundedSnap * snap;
+  }
+
+  Utils.getScreenWidth = function() {
+    if( typeof( window.innerWidth ) == &#x27;number&#x27; ) {
+      return window.innerWidth;
+    } else if( document.documentElement &amp;&amp; ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+      return document.documentElement.clientWidth;
+    } else if( document.body &amp;&amp; ( document.body.clientWidth || document.body.clientHeight ) ) {
+      return document.body.clientWidth;
+    }
+  }
+
+  Utils.getScreenHeight = function() {
+    if( typeof( window.innerWidth ) == &#x27;number&#x27; ) {
+      return window.innerHeight;
+    } else if( document.documentElement &amp;&amp; ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+      return document.documentElement.clientHeight;
+    } else if( document.body &amp;&amp; ( document.body.clientHeight || document.body.clientHeight ) ) {
+      return document.body.clientHeight;
+    }
+  }
+
+  Utils.getStage = function(obj) {
+    if ( obj.canvas ) return obj;
+    if ( obj.parent ) {
+      if ( obj.parent.canvas ) return obj.parent;
+
+      return scope.getStage(obj.parent);
+    }
+
+    return null;
+  }
+
+  Utils.getDefinitionByName = function(className,pkg,fullPath) {
+    pkg = pkg || window;
+    fullPath = fullPath || className;
+    var nodes = className.split(&#x27;.&#x27;),
+        currentNodeName = nodes.shift(),
+        currentNode = pkg[currentNodeName];
+
+    if ( currentNode ) {
+      if ( nodes.length ) {
+        return scope.getDefinitionByName(nodes.join(&#x27;.&#x27;),currentNode,fullPath);
+      }
+
+      return currentNode;
+    } else {
+      throw new Error(&#x27;Could not find \&#x27;&#x27; + currentNodeName + &#x27;\&#x27; of \&#x27;&#x27; + fullPath + &#x27;\&#x27;&#x27;)
+    }
+  }
+
+  /**
+   * from: http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript
+   */
+  Utils.applyConstruct = function(ctor, params) {
+    var obj, newobj;
+
+    if (typeof Object.create === &quot;function&quot;) {
+        obj = Object.create(ctor.prototype);
+    }
+    else if ({}.__proto__) {
+        obj = {};
+        obj.__proto__ = ctor.prototype;
+        if (obj.__proto__ !== ctor.prototype) {
+            obj = makeObjectWithFakeCtor();
+        }
+    }
+    else {
+        obj = makeObjectWithFakeCtor();
+    }
+
+    obj.constructor = ctor;
+    newobj = ctor.apply(obj, params);
+
+    if (typeof newobj === &quot;object&quot;) {
+        obj = newobj;
+    }
+
+    return obj;
+
+    function makeObjectWithFakeCtor() {
+        function fakeCtor() {
+        }
+        fakeCtor.prototype = ctor.prototype;
+        return new fakeCtor();
+    }
+  }
+
+  scope.Utils = Utils;
+}(boxledjs));
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>
