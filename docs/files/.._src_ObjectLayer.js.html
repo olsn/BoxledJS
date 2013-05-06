@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>..\src\Utils.js - BoxledJS</title>
+    <title>..\src\ObjectLayer.js - BoxledJS</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -104,152 +104,131 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>..\src\Utils.js <small>File</small></h1>
+    <h1>..\src\ObjectLayer.js <small>File</small></h1>
 </div>
 
 <div class="file">
     <pre class="prettyprint linenums">
-var boxledjs = boxledjs || {};
-
-(function(scope) {
-
+boxledjs = boxledjs || {};
+(function (scope) {
   /**
-   * Utils is a set of utility-methods to help with common tasks.
+   * An ObjectLayer holds objects such as Box2D bodies or custom classes
    * 
-   * @class Utils
+   * @class ObjectLayer
+   * @constructor
+   * @param {Object} data The complete map-data as exported to JSON by Tiled.
+   * @param {Map} map The map this ObjectLayer is created for.
    */
-  Utils = new Object();
+  function ObjectLayer(data,map) {
+    this.initialize(data,map);
+  }
+  ObjectLayer.prototype = new createjs.Container();
+  
+  ObjectLayer.prototype.Container_init = ObjectLayer.prototype.initialize;
+  
+  ObjectLayer.prototype.initialize = function (data,map) { 
+    this.Container_init();
 
-  /**
-   * Returns the width of the screen.
-   * 
-   * @method getScreenWidth
-   * @static
-   * @return {Number} the screenWidth
-   */
-  Utils.getScreenWidth = function() {
-    if( typeof( window.innerWidth ) == &#x27;number&#x27; ) {
-      return window.innerWidth;
-    } else if( document.documentElement &amp;&amp; ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-      return document.documentElement.clientWidth;
-    } else if( document.body &amp;&amp; ( document.body.clientWidth || document.body.clientHeight ) ) {
-      return document.body.clientWidth;
-    }
+    this.data = data;
+    this.properties = data.properties;
+    this.objects = {};
+    this.map = map;
+
+    this.reset();
+  }
+
+  ObjectLayer.prototype.reset = function () {
+      this.initObjects();
   }
 
   /**
-   * Returns the height of the screen.
+   * Initializes all objects from the Tiled-map, by &quot;objects&quot; all non-tile-elements are meant. (e.g. custom Collision-shapes)
+   * This is usually called on instatiation of the Layer and doesn&#x27;t need to be executed from the outside.
    * 
-   * @method getScreenHeight
-   * @static
-   * @return {Number} the screenHeight
+   * @method initObjects
+   * @protected
    */
-  Utils.getScreenHeight = function() {
-    if( typeof( window.innerWidth ) == &#x27;number&#x27; ) {
-      return window.innerHeight;
-    } else if( document.documentElement &amp;&amp; ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-      return document.documentElement.clientHeight;
-    } else if( document.body &amp;&amp; ( document.body.clientHeight || document.body.clientHeight ) ) {
-      return document.body.clientHeight;
-    }
-  }
+  ObjectLayer.prototype.initObjects = function() {
+    var c,l,objectData,object;
 
-  /**
-   * Finds the stage for a createJs.DisplayObject
-   * 
-   * @method getStage
-   * @static
-   * @param  {DisplayObject} obj
-   * @return {Stage} The createjs.Stage or null if not found
-   */
-  Utils.getStage = function(obj) {
-    if ( obj.canvas ) return obj;
-    if ( obj.parent ) {
-      if ( obj.parent.canvas ) return obj.parent;
-
-      return scope.getStage(obj.parent);
-    }
-
-    return null;
-  }
-
-  /**
-   * This will return the class according to a String describing the classpath+name
-   * e.g.: &#x27;boxledjs.Map&#x27; will return the actual class to be used for instatiation.
-   * This is used to reference custom classes in Tiled.
-   * 
-   * @method getDefinitionByName
-   * @static
-   * @throws {Error} If Class not found
-   * @param  {String} className The fully qualified name of the class. e.g.: &#x27;boxledjs.Map&#x27;
-   * @param  {Object} [pkg=window] The package to start searching, defaults to &#x27;window&#x27;
-   * @param  {String} [fullPath] The full path, only used for recursive iterations, not needed for the initial call.
-   * @return {Function} The constructor of the class.
-   */
-  Utils.getDefinitionByName = function(className,pkg,fullPath) {
-    pkg = pkg || window;
-    fullPath = fullPath || className;
-    var nodes = className.split(&#x27;.&#x27;),
-        currentNodeName = nodes.shift(),
-        currentNode = pkg[currentNodeName];
-
-    if ( currentNode ) {
-      if ( nodes.length ) {
-        return scope.getDefinitionByName(nodes.join(&#x27;.&#x27;),currentNode,fullPath);
+    for ( c = 0, l = this.data.objects.length; c &lt; l; c++ ) {
+      objectData = this.data.objects[c];
+      //if it has a type, use the type to create a custom object
+      if (objectData.type &amp;&amp; objectData.type != &#x27;&#x27;) {
+        object = this.makeObjectFromData(objectData);
+      } else { //else create a Box2D object from it
+        object = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData,this.map.b2dWorld);
       }
 
-      return currentNode;
-    } else {
-      throw new Error(&#x27;Could not find \&#x27;&#x27; + currentNodeName + &#x27;\&#x27; of \&#x27;&#x27; + fullPath + &#x27;\&#x27;&#x27;)
+      try {
+        object.isVisible &amp;&amp; this.addChild(object);
+      } catch ( e ) {
+        //.. couldn&#x27;t add to stage
+      }
+
+      try {
+        if ( object.bxd ) {
+          var body = this.map.b2dWorld.CreateBody(object.bxd.bodyDef);
+          body.CreateFixture(object.bxd.fixDef);
+          body.CreateFixture(object.bxd.sensorsDef.bottom).SetUserData({sensorPosition: &#x27;bottom&#x27;});
+          body.CreateFixture(object.bxd.sensorsDef.top).SetUserData({sensorPosition: &#x27;top&#x27;});
+          body.CreateFixture(object.bxd.sensorsDef.right).SetUserData({sensorPosition: &#x27;right&#x27;});
+          body.CreateFixture(object.bxd.sensorsDef.left).SetUserData({sensorPosition: &#x27;left&#x27;});
+          body.SetPositionAndAngle(new Box2D.Common.Math.b2Vec2(object.x/boxledjs.Const.scale,object.y/boxledjs.Const.scale), object.rotation*Math.PI/180);
+          object.bxd.sensorsDef = undefined;
+          object.bxd.body = body;
+          body.SetUserData(object);
+
+          if ( object.bxd.onBodyCreated ) {
+            object.bxd.onBodyCreated(body);
+          }
+        }
+      } catch( e ) {
+        console.log(objectData.name);
+        //.. couldn&#x27;t add to b2d world
+      }
+
+      if ( objectData.name &amp;&amp; objectData.name != &#x27;&#x27; ) {
+        this.objects[objectData.name] = object;
+        this.map.objects[objectData.name] = object;
+      }
     }
   }
 
   /**
-   * Constructors cannot be executed with &#x27;.apply([...])&#x27; like methods, this method mocks that.
-   * (from: http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript)
-   * 
-   * @method applyConstruct
-   * @static
-   * @param  {Function} ctor The constructor.
-   * @param  {Array} params The parameters to apply to the constructor.
-   * @return {Object} The instatiated object.
+   * Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)
+   * @param  {Object} objectData The data exported by Tiled.
    */
-  Utils.applyConstruct = function(ctor, params) {
-    var obj, newobj;
+  ObjectLayer.prototype.makeObjectFromData = function(objectData) {
+    var className,objectClass,objectParams,object,properties = objectData.properties;
 
-    if (typeof Object.create === &quot;function&quot;) {
-        obj = Object.create(ctor.prototype);
-    }
-    else if ({}.__proto__) {
-        obj = {};
-        obj.__proto__ = ctor.prototype;
-        if (obj.__proto__ !== ctor.prototype) {
-            obj = makeObjectWithFakeCtor();
-        }
-    }
-    else {
-        obj = makeObjectWithFakeCtor();
-    }
+    className = objectData.type || properties.classDefinition;
+    objectClass = (boxledjs.Utils.getDefinitionByName(className));
 
-    obj.constructor = ctor;
-    newobj = ctor.apply(obj, params);
+    if ( properties.parameter &amp;&amp; properties.parameter != &#x27;&#x27; ) {
 
-    if (typeof newobj === &quot;object&quot;) {
-        obj = newobj;
+      objectParams = JSON.parse(properties.parameter);
+      if ( typeof(objectParams) == &#x27;object&#x27; ) {
+        object = boxledjs.Utils.applyConstruct(objectClass,objectParams);
+      }
+    }
+    object = object || new objectClass(); //in case no parameters were given
+
+    for ( var key in properties ) {
+      if ( key != &#x27;classDefinition&#x27; &amp;&amp; key != &#x27;parameter&#x27; ) {
+        object[key] = properties[key];
+      }
     }
 
-    return obj;
+    object.x = objectData.x;
+    object.y = objectData.y;
+    object.rotation = objectData.rotation;
 
-    function makeObjectWithFakeCtor() {
-        function fakeCtor() {
-        }
-        fakeCtor.prototype = ctor.prototype;
-        return new fakeCtor();
-    }
+    return object;
   }
-
-  scope.Utils = Utils;
-}(boxledjs));
+  
+  scope.ObjectLayer = ObjectLayer; 
+} (boxledjs));
     </pre>
 </div>
 

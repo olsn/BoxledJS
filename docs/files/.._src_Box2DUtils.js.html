@@ -1,3 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>..\src\Box2DUtils.js - BoxledJS</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap-responsive.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+        
+	    <img alt="BoxledJS" src="../assets/css/logo.png" style="max-height: 65%;" title="BoxledJS">
+        
+            BoxledJS
+        </h1>
+	<div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    API Docs for Version: <b>0.1.1</b>
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/Box2DUtils", "classes/Map", "classes/ObjectLayer", "classes/TileLayer", "classes/Utils"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3">
+	    <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-tabs" style="margin-bottom:0;">
+            <li class="active"><a href="#classes" data-toggle="tab">Classes</a></li>
+            <li><a href="#modules" data-toggle="tab">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" placeholder="Type to filter APIs">
+        </div>
+
+        <div class="tab-content" style="border: 1px solid #DDD; border-top:0;">
+            <div class="tab-pane active" id="classes">
+                <ul id="api-classes" class="nav nav-list">
+                    
+                        <li><a href="../classes/Box2DUtils.html">Box2DUtils</a></li>
+                    
+                        <li><a href="../classes/Map.html">Map</a></li>
+                    
+                        <li><a href="../classes/ObjectLayer.html">ObjectLayer</a></li>
+                    
+                        <li><a href="../classes/TileLayer.html">TileLayer</a></li>
+                    
+                        <li><a href="../classes/Utils.html">Utils</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="tab-pane" id="modules">
+                <ul id="api-modules" class="nav nav-list">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+        <div class="span9">
+                <form id="options-form" class="form-inline pull-right">
+        Show:
+        <label for="api-show-inherited" class="checkbox">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected" class="checkbox">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private" class="checkbox">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated" class="checkbox">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </form>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+    <h1>..\src\Box2DUtils.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre class="prettyprint linenums">
 var boxledjs = boxledjs || {};
 (function (scope) {
 
@@ -8,8 +119,8 @@ var boxledjs = boxledjs || {};
    */
   Box2DUtils = new Object();
 
-  Box2DUtils.RECT = 'rect';
-  Box2DUtils.CIRCLE = 'circle';
+  Box2DUtils.RECT = &#x27;rect&#x27;;
+  Box2DUtils.CIRCLE = &#x27;circle&#x27;;
 
   /**
    * Converts a set of object definitions into a Box2D b2Body for the world-simulation.
@@ -28,7 +139,7 @@ var boxledjs = boxledjs || {};
     fixDef.density = properties.density == undefined ? 1 : parseFloat(properties.density);
     fixDef.friction = properties.friction == undefined ? 0.5 : parseFloat(properties.friction);
     fixDef.restitution = properties.restitution == undefined ? 0.05 : parseFloat(properties.restitution);
-    fixDef.isSensor = (properties.isSensor&&properties.isSensor != 'false') || (properties.noCollision&&properties.noCollision != 'false') || properties.force || properties.forceX || properties.forceY || properties.gravityFactor != undefined;
+    fixDef.isSensor = (properties.isSensor&amp;&amp;properties.isSensor != &#x27;false&#x27;) || (properties.noCollision&amp;&amp;properties.noCollision != &#x27;false&#x27;) || properties.force || properties.forceX || properties.forceY || properties.gravityFactor != undefined;
 
     var bodyDef = new Box2D.Dynamics.b2BodyDef();
     bodyDef.type = properties.dynamic ? Box2D.Dynamics.b2Body.b2_dynamicBody : Box2D.Dynamics.b2Body.b2_staticBody;
@@ -42,13 +153,13 @@ var boxledjs = boxledjs || {};
       body.CreateFixture(fixDef);
       objectData.x += objectData.width / 2;
       objectData.y += objectData.height / 2;
-    } else if ( objectData.polygon && objectData.polygon.length > 1 ) {
+    } else if ( objectData.polygon &amp;&amp; objectData.polygon.length &gt; 1 ) {
       // POLYGON:
       Box2D.Ext.b2Separator.Separate(body,fixDef,objectData.polygon,boxledjs.Const.scale);
-    } else if ( objectData.polyline && objectData.polyline.length > 1 ) {
+    } else if ( objectData.polyline &amp;&amp; objectData.polyline.length &gt; 1 ) {
       // POLYLINE:
       var v1,v2,c,l,pp;
-      for ( c = 0, l = objectData.polyline.length; c < l-1; c++) {
+      for ( c = 0, l = objectData.polyline.length; c &lt; l-1; c++) {
         fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
         pp = objectData.polyline[c];
         v1 = new Box2D.Common.Math.b2Vec2(pp.x/boxledjs.Const.scale,pp.y/boxledjs.Const.scale);
@@ -74,7 +185,7 @@ var boxledjs = boxledjs || {};
   /**
    * Whenever you want to create a custom object that is supposed to interact with the Box2D b2World,
    * it is strongly recommended that you call this method in the constructor of your class, see the example below:
-   * <pre>
+   * &lt;pre&gt;
    * function Hero() {
    *   var self = this;
    * 
@@ -90,14 +201,14 @@ var boxledjs = boxledjs || {};
    *   // for example setting a fixed rotation or more steps
    *   body.SetFixedRotation(true);
    *   body.SetBullet(true);
-   * }</pre>
-   * After the injection, the object will have a property called <em>bxd</em>, it holds the <em>body</em> and a <em>sensors</em> object,
-   * where you can check if 'top','left','bottom' or 'right' is currently touching anything.
+   * }&lt;/pre&gt;
+   * After the injection, the object will have a property called &lt;em&gt;bxd&lt;/em&gt;, it holds the &lt;em&gt;body&lt;/em&gt; and a &lt;em&gt;sensors&lt;/em&gt; object,
+   * where you can check if &#x27;top&#x27;,&#x27;left&#x27;,&#x27;bottom&#x27; or &#x27;right&#x27; is currently touching anything.
    * 
    * @method injectBox2d
    * @static
    * @param  {Object} object The object that the b2Body is injected to
-   * @param  {String} type The type of the body, currently only 'rect' and 'circle' are supported.
+   * @param  {String} type The type of the body, currently only &#x27;rect&#x27; and &#x27;circle&#x27; are supported.
    * @param  {Number} widthOrRadius The width of the body, or the radius in case of a circle.
    * @param  {Number} height The height of the body (ignored if circle).
    * @param  {Number} [density=1] The density of the body, this correlated to the Box2D-physics model.
@@ -106,7 +217,7 @@ var boxledjs = boxledjs || {};
    * @param  {Boolean} [dynamic=true] Defines if the body is supposed to be a dynamic or static(non-moving) body.
    */
   Box2DUtils.injectBox2d = function(object,type,widthOrRadius,height,density,friction,restitution,dynamic) {
-    dynamic == undefined && (dynamic = true);
+    dynamic == undefined &amp;&amp; (dynamic = true);
 
     var scale = boxledjs.Const.scale = boxledjs.Const.scale || 32;
     object.bxd = {};
@@ -131,7 +242,7 @@ var boxledjs = boxledjs || {};
     } else if ( type == Box2DUtils.CIRCLE ) {
       fixDef.shape = new Box2D.Collision.Shapes.b2CircleShape(widthOrRadius*2/scale);
     } else {
-      throw new Error('Cannot resolve shape-type: ' + type);
+      throw new Error(&#x27;Cannot resolve shape-type: &#x27; + type);
     }
 
     object.bxd.fixDef = fixDef;
@@ -148,7 +259,7 @@ var boxledjs = boxledjs || {};
       object.__onTick = object.onTick;
     }
     object.onTick = function(e) {
-      this.__onTick && this.__onTick(e);
+      this.__onTick &amp;&amp; this.__onTick(e);
 
       if ( !this.bxd.body ) return;
       var pt = this.bxd.body.GetPosition();
@@ -180,12 +291,28 @@ Object.equals = function( x, y ) {
     if ( ! x.hasOwnProperty( p ) ) continue;
     if ( ! y.hasOwnProperty( p ) ) return false;
     if ( x[ p ] === y[ p ] ) continue;
-    if ( typeof( x[ p ] ) !== "object" ) return false;
+    if ( typeof( x[ p ] ) !== &quot;object&quot; ) return false;
     if ( ! Object.equals( x[ p ],  y[ p ] ) ) return false;
   }
 
   for ( p in y ) {
-    if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) ) return false;
+    if ( y.hasOwnProperty( p ) &amp;&amp; ! x.hasOwnProperty( p ) ) return false;
   }
   return true;
 }
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script>prettyPrint();</script>
+</body>
+</html>

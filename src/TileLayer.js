@@ -1,5 +1,13 @@
 boxledjs = boxledjs || {};
 (function (scope) {
+  /**
+   * The TileLayer parses all tilelayers as exported by Tiled to JSON.
+   * 
+   * @class TileLayer
+   * @constructor
+   * @param {Object} data The tilelayer-data as exported to JSON by Tiled.
+   * @param {Map} map The map this ObjectLayer is created for.
+   */
   function TileLayer(data,map) {
     this.initialize(data,map);
   }
@@ -37,6 +45,12 @@ boxledjs = boxledjs || {};
     }
   }
 
+  /**
+   * Draws the actual tiles to the container.
+   *
+   * @method drawTiles
+   * @protected
+   */
   TileLayer.prototype.drawTiles = function() {
     var tiledata = this.data.data,
         x,y,tile_array_pos,tileid,frame,bm;
@@ -60,6 +74,12 @@ boxledjs = boxledjs || {};
     }
   }
 
+  /**
+   * Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.
+   * 
+   * @method calculateCollisionShapes
+   * @protected
+   */
   TileLayer.prototype.calculateCollisionShapes = function() {
     var tile_array_pos,tileid,x,y,c,l,tw = this.map.data.tilewidth,th = this.map.data.tileheight;
 
@@ -74,7 +94,6 @@ boxledjs = boxledjs || {};
       }
     }
 
-    //this is simpler than the algorithm below
     for ( c = 0, l = this.colTileGroups.length; c < l; c++ ) {
       var group = this.colTileGroups[c],
           tiles = group.tiles;
@@ -92,6 +111,12 @@ boxledjs = boxledjs || {};
     }
   }
 
+  /**
+   * Finds a set of shapes in a row (only horizontal currently)
+   * 
+   * @method findNextCollisionShapeTile
+   * @protected
+   */
   TileLayer.prototype.findNextCollisionShapeTile = function(x,y) {
     x = x || 0;
     y = y || 0;

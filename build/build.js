@@ -16,7 +16,7 @@ new compressor.minify({
       '../src/TileLayer.js',
       '../src/Map.js'
     ],
-    fileOut: '../lib/boxledjs-0.1.0.min.js',
+    fileOut: '../lib/boxledjs-0.1.1.min.js',
     callback: function(err){
         console.log(err);
     }

@@ -2,13 +2,22 @@
     "project": {
         "name": "BoxledJS",
         "url": "www.indiegamr.com",
-        "version": "0.1.0"
+        "version": "0.1.1"
     },
     "files": {
         "..\\src\\b2d\\b2Separator.js": {
             "name": "..\\src\\b2d\\b2Separator.js",
             "modules": {},
             "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "..\\src\\Box2DUtils.js": {
+            "name": "..\\src\\Box2DUtils.js",
+            "modules": {},
+            "classes": {
+                "Box2DUtils": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -21,16 +30,48 @@
             "fors": {},
             "namespaces": {}
         },
+        "..\\src\\ObjectLayer.js": {
+            "name": "..\\src\\ObjectLayer.js",
+            "modules": {},
+            "classes": {
+                "ObjectLayer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "..\\src\\TileLayer.js": {
+            "name": "..\\src\\TileLayer.js",
+            "modules": {},
+            "classes": {
+                "TileLayer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "..\\src\\Utils.js": {
             "name": "..\\src\\Utils.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "Utils": 1
+            },
             "fors": {},
             "namespaces": {}
         }
     },
     "modules": {},
     "classes": {
+        "Box2DUtils": {
+            "name": "Box2DUtils",
+            "shortname": "Box2DUtils",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "..\\src\\Box2DUtils.js",
+            "line": 4,
+            "description": "Box2DUtils is a set of utility-methods to help with common Box2D tasks."
+        },
         "Map": {
             "name": "Map",
             "shortname": "Map",
@@ -41,7 +82,7 @@
             "extension_for": [],
             "file": "..\\src\\Map.js",
             "line": 7,
-            "description": "The Map represents a Tiled Map.",
+            "description": "The Map represents a Tiled Map, it is created by passing the JSON data exported from Tiled in the constructor.",
             "is_constructor": 1,
             "params": [
                 {
@@ -56,6 +97,68 @@
                     "optional": true
                 }
             ]
+        },
+        "ObjectLayer": {
+            "name": "ObjectLayer",
+            "shortname": "ObjectLayer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "..\\src\\ObjectLayer.js",
+            "line": 3,
+            "description": "An ObjectLayer holds objects such as Box2D bodies or custom classes",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "data",
+                    "description": "The complete map-data as exported to JSON by Tiled.",
+                    "type": "Object"
+                },
+                {
+                    "name": "map",
+                    "description": "The map this ObjectLayer is created for.",
+                    "type": "Map"
+                }
+            ]
+        },
+        "TileLayer": {
+            "name": "TileLayer",
+            "shortname": "TileLayer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "..\\src\\TileLayer.js",
+            "line": 3,
+            "description": "The TileLayer parses all tilelayers as exported by Tiled to JSON.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "data",
+                    "description": "The tilelayer-data as exported to JSON by Tiled.",
+                    "type": "Object"
+                },
+                {
+                    "name": "map",
+                    "description": "The map this ObjectLayer is created for.",
+                    "type": "Map"
+                }
+            ]
+        },
+        "Utils": {
+            "name": "Utils",
+            "shortname": "Utils",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "..\\src\\Utils.js",
+            "line": 5,
+            "description": "Utils is a set of utility-methods to help with common tasks."
         }
     },
     "classitems": [
@@ -87,7 +190,7 @@
                 "b2PolygonShape.SetAsArray()",
                 "b2Fixture"
             ],
-            "class": "Map"
+            "class": "Box2DUtils"
         },
         {
             "file": "..\\src\\b2d\\b2Separator.js",
@@ -102,7 +205,91 @@
             "return": {
                 "description": "An integer which can have the following values:\n<ul>\n<li>0 if the vertices can be properly processed.</li>\n<li>1 If there are overlapping lines.</li>\n<li>2 if the points are <b>not</b> in clockwise order.</li>\n<li>3 if there are overlapping lines <b>and</b> the points are <b>not</b> in clockwise order.</li>\n</ul>"
             },
-            "class": "Map"
+            "class": "Box2DUtils"
+        },
+        {
+            "file": "..\\src\\Box2DUtils.js",
+            "line": 14,
+            "description": "Converts a set of object definitions into a Box2D b2Body for the world-simulation.",
+            "itemtype": "method",
+            "name": "makeB2DBodyFromData",
+            "static": 1,
+            "params": [
+                {
+                    "name": "objectData",
+                    "description": "The data as exported from Tiled to JSON.",
+                    "type": "Object"
+                },
+                {
+                    "name": "world",
+                    "description": "The Box2D b2World to create the body in.",
+                    "type": "B2World"
+                }
+            ],
+            "return": {
+                "description": "The created Box2D b2Body.",
+                "type": "B2Body"
+            },
+            "class": "Box2DUtils"
+        },
+        {
+            "file": "..\\src\\Box2DUtils.js",
+            "line": 74,
+            "description": "Whenever you want to create a custom object that is supposed to interact with the Box2D b2World,\nit is strongly recommended that you call this method in the constructor of your class, see the example below:\n<pre>\nfunction Hero() {\n  var self = this;\n\n  // in the constructor or in a sub-method of the constructor\n  boxledjs.Box2DUtils.injectBox2d(this, boxledjs.Box2DUtils.RECT, 100, 150, 1, 0.5, 0.05);\n\n  // implement this method if you want to apply some special settings after\n  // the body was created\n  this.bxd.onBodyCreated = function(body) { self.onBodyCreated(body) };\n}\n\nHero.prototype.onBodyCreated = function(body) {\n  // for example setting a fixed rotation or more steps\n  body.SetFixedRotation(true);\n  body.SetBullet(true);\n}</pre>\nAfter the injection, the object will have a property called <em>bxd</em>, it holds the <em>body</em> and a <em>sensors</em> object,\nwhere you can check if 'top','left','bottom' or 'right' is currently touching anything.",
+            "itemtype": "method",
+            "name": "injectBox2d",
+            "static": 1,
+            "params": [
+                {
+                    "name": "object",
+                    "description": "The object that the b2Body is injected to",
+                    "type": "Object"
+                },
+                {
+                    "name": "type",
+                    "description": "The type of the body, currently only 'rect' and 'circle' are supported.",
+                    "type": "String"
+                },
+                {
+                    "name": "widthOrRadius",
+                    "description": "The width of the body, or the radius in case of a circle.",
+                    "type": "Number"
+                },
+                {
+                    "name": "height",
+                    "description": "The height of the body (ignored if circle).",
+                    "type": "Number"
+                },
+                {
+                    "name": "density",
+                    "description": "The density of the body, this correlated to the Box2D-physics model.",
+                    "type": "Number",
+                    "optional": true,
+                    "optdefault": "1"
+                },
+                {
+                    "name": "friction",
+                    "description": "The friction of the body, this correlated to the Box2D-physics model.",
+                    "type": "Number",
+                    "optional": true,
+                    "optdefault": "0.5"
+                },
+                {
+                    "name": "restitution",
+                    "description": "The restitution of the body, this correlated to the Box2D-physics model.",
+                    "type": "Number",
+                    "optional": true,
+                    "optdefault": "0.05"
+                },
+                {
+                    "name": "dynamic",
+                    "description": "Defines if the body is supposed to be a dynamic or static(non-moving) body.",
+                    "type": "Boolean",
+                    "optional": true,
+                    "optdefault": "true"
+                }
+            ],
+            "class": "Box2DUtils"
         },
         {
             "file": "..\\src\\Map.js",
@@ -246,10 +433,164 @@
             "class": "Map"
         },
         {
+            "file": "..\\src\\ObjectLayer.js",
+            "line": 33,
+            "description": "Initializes all objects from the Tiled-map, by \"objects\" all non-tile-elements are meant. (e.g. custom Collision-shapes)\nThis is usually called on instatiation of the Layer and doesn't need to be executed from the outside.",
+            "itemtype": "method",
+            "name": "initObjects",
+            "access": "protected",
+            "tagname": "",
+            "class": "ObjectLayer"
+        },
+        {
+            "file": "..\\src\\ObjectLayer.js",
+            "line": 87,
+            "description": "Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
+            "params": [
+                {
+                    "name": "objectData",
+                    "description": "The data exported by Tiled.",
+                    "type": "Object"
+                }
+            ],
+            "class": "ObjectLayer"
+        },
+        {
+            "file": "..\\src\\TileLayer.js",
+            "line": 48,
+            "description": "Draws the actual tiles to the container.",
+            "itemtype": "method",
+            "name": "drawTiles",
+            "access": "protected",
+            "tagname": "",
+            "class": "TileLayer"
+        },
+        {
+            "file": "..\\src\\TileLayer.js",
+            "line": 77,
+            "description": "Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.",
+            "itemtype": "method",
+            "name": "calculateCollisionShapes",
+            "access": "protected",
+            "tagname": "",
+            "class": "TileLayer"
+        },
+        {
+            "file": "..\\src\\TileLayer.js",
+            "line": 114,
+            "description": "Finds a set of shapes in a row (only horizontal currently)",
+            "itemtype": "method",
+            "name": "findNextCollisionShapeTile",
+            "access": "protected",
+            "tagname": "",
+            "class": "TileLayer"
+        },
+        {
             "file": "..\\src\\Utils.js",
-            "line": 72,
-            "description": "from: http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript",
-            "class": ""
+            "line": 12,
+            "description": "Returns the width of the screen.",
+            "itemtype": "method",
+            "name": "getScreenWidth",
+            "static": 1,
+            "return": {
+                "description": "the screenWidth",
+                "type": "Number"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "..\\src\\Utils.js",
+            "line": 29,
+            "description": "Returns the height of the screen.",
+            "itemtype": "method",
+            "name": "getScreenHeight",
+            "static": 1,
+            "return": {
+                "description": "the screenHeight",
+                "type": "Number"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "..\\src\\Utils.js",
+            "line": 46,
+            "description": "Finds the stage for a createJs.DisplayObject",
+            "itemtype": "method",
+            "name": "getStage",
+            "static": 1,
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "",
+                    "type": "DisplayObject"
+                }
+            ],
+            "return": {
+                "description": "The createjs.Stage or null if not found",
+                "type": "Stage"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "..\\src\\Utils.js",
+            "line": 65,
+            "description": "This will return the class according to a String describing the classpath+name\ne.g.: 'boxledjs.Map' will return the actual class to be used for instatiation.\nThis is used to reference custom classes in Tiled.",
+            "itemtype": "method",
+            "name": "getDefinitionByName",
+            "static": 1,
+            "throws": [
+                "{Error} If Class not found"
+            ],
+            "params": [
+                {
+                    "name": "className",
+                    "description": "The fully qualified name of the class. e.g.: 'boxledjs.Map'",
+                    "type": "String"
+                },
+                {
+                    "name": "pkg",
+                    "description": "The package to start searching, defaults to 'window'",
+                    "type": "Object",
+                    "optional": true,
+                    "optdefault": "window"
+                },
+                {
+                    "name": "fullPath",
+                    "description": "The full path, only used for recursive iterations, not needed for the initial call.",
+                    "type": "String",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "The constructor of the class.",
+                "type": "Function"
+            },
+            "class": "Utils"
+        },
+        {
+            "file": "..\\src\\Utils.js",
+            "line": 96,
+            "description": "Constructors cannot be executed with '.apply([...])' like methods, this method mocks that.\n(from: http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript)",
+            "itemtype": "method",
+            "name": "applyConstruct",
+            "static": 1,
+            "params": [
+                {
+                    "name": "ctor",
+                    "description": "The constructor.",
+                    "type": "Function"
+                },
+                {
+                    "name": "params",
+                    "description": "The parameters to apply to the constructor.",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "The instatiated object.",
+                "type": "Object"
+            },
+            "class": "Utils"
         }
     ],
     "warnings": [
@@ -262,8 +603,8 @@
             "line": " ..\\src\\b2d\\b2Separator.js:69"
         },
         {
-            "message": "Missing item type\nfrom: http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript",
-            "line": " ..\\src\\Utils.js:72"
+            "message": "Missing item type\nCreates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
+            "line": " ..\\src\\ObjectLayer.js:87"
         }
     ]
 }

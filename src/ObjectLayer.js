@@ -1,5 +1,13 @@
 boxledjs = boxledjs || {};
 (function (scope) {
+  /**
+   * An ObjectLayer holds objects such as Box2D bodies or custom classes
+   * 
+   * @class ObjectLayer
+   * @constructor
+   * @param {Object} data The complete map-data as exported to JSON by Tiled.
+   * @param {Map} map The map this ObjectLayer is created for.
+   */
   function ObjectLayer(data,map) {
     this.initialize(data,map);
   }
@@ -19,20 +27,27 @@ boxledjs = boxledjs || {};
   }
 
   ObjectLayer.prototype.reset = function () {
-    this.isCollisionLayer = this.properties && this.properties.collisionLayer && this.properties.collisionLayer != 'false';
-    if ( this.isCollisionLayer ) {
-      this.initObjectsAsB2dBodies();
-    } else {
       this.initObjects();
-    }
   }
 
+  /**
+   * Initializes all objects from the Tiled-map, by "objects" all non-tile-elements are meant. (e.g. custom Collision-shapes)
+   * This is usually called on instatiation of the Layer and doesn't need to be executed from the outside.
+   * 
+   * @method initObjects
+   * @protected
+   */
   ObjectLayer.prototype.initObjects = function() {
     var c,l,objectData,object;
 
     for ( c = 0, l = this.data.objects.length; c < l; c++ ) {
       objectData = this.data.objects[c];
-      object = this.makeObjectFromData(objectData);
+      //if it has a type, use the type to create a custom object
+      if (objectData.type && objectData.type != '') {
+        object = this.makeObjectFromData(objectData);
+      } else { //else create a Box2D object from it
+        object = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData,this.map.b2dWorld);
+      }
 
       try {
         object.isVisible && this.addChild(object);
@@ -69,39 +84,24 @@ boxledjs = boxledjs || {};
     }
   }
 
-  ObjectLayer.prototype.initObjectsAsB2dBodies = function() {
-    var c,l,objectData,object;
-
-    for ( c = 0, l = this.data.objects.length; c < l; c++ ) {
-      objectData = this.data.objects[c];
-      object = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData,this.map.b2dWorld);
-    }
-
-    if ( objectData.name && objectData.name != '' ) {
-      this.objects[objectData.name] = object;
-      this.map.objects[objectData.name] = object;
-    }
-  }
-
+  /**
+   * Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)
+   * @param  {Object} objectData The data exported by Tiled.
+   */
   ObjectLayer.prototype.makeObjectFromData = function(objectData) {
     var className,objectClass,objectParams,object,properties = objectData.properties;
 
-    if ( (objectData.type && objectData.type != '')
-      || (properties.classDefinition && properties.classDefinition != '') ) {
+    className = objectData.type || properties.classDefinition;
+    objectClass = (boxledjs.Utils.getDefinitionByName(className));
 
-      className = objectData.type || properties.classDefinition;
-      objectClass = (boxledjs.Utils.getDefinitionByName(className));
+    if ( properties.parameter && properties.parameter != '' ) {
 
-      if ( properties.parameter && properties.parameter != '' ) {
-
-        objectParams = JSON.parse(properties.parameter);
-        if ( typeof(objectParams) == 'object' ) {
-          object = boxledjs.Utils.applyConstruct(objectClass,objectParams);
-        }
+      objectParams = JSON.parse(properties.parameter);
+      if ( typeof(objectParams) == 'object' ) {
+        object = boxledjs.Utils.applyConstruct(objectClass,objectParams);
       }
-      object = object || new objectClass(); //in case no parameters were given
     }
-    object = object || {}; //in case no classDefinition was given
+    object = object || new objectClass(); //in case no parameters were given
 
     for ( var key in properties ) {
       if ( key != 'classDefinition' && key != 'parameter' ) {

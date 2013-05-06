@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>..\src\Utils.js - BoxledJS</title>
+    <title>..\src\TileLayer.js - BoxledJS</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.7.0/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -104,152 +104,154 @@
                 <div id="docs-main">
                     <div class="content">
                         <div class="page-header">
-    <h1>..\src\Utils.js <small>File</small></h1>
+    <h1>..\src\TileLayer.js <small>File</small></h1>
 </div>
 
 <div class="file">
     <pre class="prettyprint linenums">
-var boxledjs = boxledjs || {};
-
-(function(scope) {
-
+boxledjs = boxledjs || {};
+(function (scope) {
   /**
-   * Utils is a set of utility-methods to help with common tasks.
+   * The TileLayer parses all tilelayers as exported by Tiled to JSON.
    * 
-   * @class Utils
+   * @class TileLayer
+   * @constructor
+   * @param {Object} data The tilelayer-data as exported to JSON by Tiled.
+   * @param {Map} map The map this ObjectLayer is created for.
    */
-  Utils = new Object();
+  function TileLayer(data,map) {
+    this.initialize(data,map);
+  }
+  TileLayer.prototype = new createjs.Container();
+  
+  TileLayer.prototype.Container_init = TileLayer.prototype.initialize;
+  
+  TileLayer.prototype.initialize = function (data,map) { 
+    this.Container_init();
 
-  /**
-   * Returns the width of the screen.
-   * 
-   * @method getScreenWidth
-   * @static
-   * @return {Number} the screenWidth
-   */
-  Utils.getScreenWidth = function() {
-    if( typeof( window.innerWidth ) == &#x27;number&#x27; ) {
-      return window.innerWidth;
-    } else if( document.documentElement &amp;&amp; ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-      return document.documentElement.clientWidth;
-    } else if( document.body &amp;&amp; ( document.body.clientWidth || document.body.clientHeight ) ) {
-      return document.body.clientWidth;
+    this.data = data;
+    this.properties = data.properties;
+    this.map = map;
+
+    this.reset();
+  }
+
+  TileLayer.prototype.reset = function () {
+    this.x = this.data.x;
+    this.y = this.data.y;
+    this.visible = this.data.visible;
+    this.numTilesX = this.data.width;
+    this.numTilesY = this.data.height;
+    this.isCollisionLayer = this.properties &amp;&amp; this.properties.collisionLayer &amp;&amp; this.properties.collisionLayer != &#x27;false&#x27;;
+    if ( this.isCollisionLayer ) {
+      this.colTilesToCheck = [];
+      this.colTileGroups = [];
+    }
+
+    this.drawTiles();
+    this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
+
+    if ( this.isCollisionLayer ) {
+      this.calculateCollisionShapes();
     }
   }
 
   /**
-   * Returns the height of the screen.
-   * 
-   * @method getScreenHeight
-   * @static
-   * @return {Number} the screenHeight
+   * Draws the actual tiles to the container.
+   *
+   * @method drawTiles
+   * @protected
    */
-  Utils.getScreenHeight = function() {
-    if( typeof( window.innerWidth ) == &#x27;number&#x27; ) {
-      return window.innerHeight;
-    } else if( document.documentElement &amp;&amp; ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
-      return document.documentElement.clientHeight;
-    } else if( document.body &amp;&amp; ( document.body.clientHeight || document.body.clientHeight ) ) {
-      return document.body.clientHeight;
+  TileLayer.prototype.drawTiles = function() {
+    var tiledata = this.data.data,
+        x,y,tile_array_pos,tileid,frame,bm;
+
+    for ( y = 0; y &lt; this.numTilesY; y++ ) {
+      for ( x = 0; x &lt; this.numTilesX; x++ ) {
+        tile_array_pos = y * this.numTilesX + x;
+        tileid = tiledata[tile_array_pos];
+        if ( tileid != 0 ) {
+          frame = this.map.getTileById(tileid);
+          bm = new createjs.Bitmap(frame.image);
+          bm.sourceRect = frame.rect;
+          bm.x = x * this.map.data.tilewidth;
+          bm.y = y * this.map.data.tileheight;
+          this.addChild(bm);
+        }
+        if ( this.isCollisionLayer ) {
+          this.colTilesToCheck[tile_array_pos] = tileid;
+        }
+      }
     }
   }
 
   /**
-   * Finds the stage for a createJs.DisplayObject
+   * Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.
    * 
-   * @method getStage
-   * @static
-   * @param  {DisplayObject} obj
-   * @return {Stage} The createjs.Stage or null if not found
+   * @method calculateCollisionShapes
+   * @protected
    */
-  Utils.getStage = function(obj) {
-    if ( obj.canvas ) return obj;
-    if ( obj.parent ) {
-      if ( obj.parent.canvas ) return obj.parent;
+  TileLayer.prototype.calculateCollisionShapes = function() {
+    var tile_array_pos,tileid,x,y,c,l,tw = this.map.data.tilewidth,th = this.map.data.tileheight;
 
-      return scope.getStage(obj.parent);
+    for ( y = 0; y &lt; this.numTilesY; y++ ) {
+      for ( x = 0; x &lt; this.numTilesX; x++ ) {
+        tile_array_pos = y * this.numTilesX + x;
+        tileid = this.colTilesToCheck[tile_array_pos];
+        if ( tileid != undefined &amp;&amp; tileid != 0 ) {
+          this.colTileGroups.push({tiles:[]});
+          this.findNextCollisionShapeTile(x,y);
+        }
+      }
     }
 
-    return null;
-  }
-
-  /**
-   * This will return the class according to a String describing the classpath+name
-   * e.g.: &#x27;boxledjs.Map&#x27; will return the actual class to be used for instatiation.
-   * This is used to reference custom classes in Tiled.
-   * 
-   * @method getDefinitionByName
-   * @static
-   * @throws {Error} If Class not found
-   * @param  {String} className The fully qualified name of the class. e.g.: &#x27;boxledjs.Map&#x27;
-   * @param  {Object} [pkg=window] The package to start searching, defaults to &#x27;window&#x27;
-   * @param  {String} [fullPath] The full path, only used for recursive iterations, not needed for the initial call.
-   * @return {Function} The constructor of the class.
-   */
-  Utils.getDefinitionByName = function(className,pkg,fullPath) {
-    pkg = pkg || window;
-    fullPath = fullPath || className;
-    var nodes = className.split(&#x27;.&#x27;),
-        currentNodeName = nodes.shift(),
-        currentNode = pkg[currentNodeName];
-
-    if ( currentNode ) {
-      if ( nodes.length ) {
-        return scope.getDefinitionByName(nodes.join(&#x27;.&#x27;),currentNode,fullPath);
+    for ( c = 0, l = this.colTileGroups.length; c &lt; l; c++ ) {
+      var group = this.colTileGroups[c],
+          tiles = group.tiles;
+      var x = tiles[0].x, y = tiles[0].y, width = tiles[tiles.length-1].x-x+1, height = 1,
+          properties = this.map.getTileProperties(group.tileid) || {};
+      var objectData = {
+        x:x * tw,
+        y:y * th,
+        width:width * tw,
+        height:height * th,
+        properties:properties
       }
 
-      return currentNode;
-    } else {
-      throw new Error(&#x27;Could not find \&#x27;&#x27; + currentNodeName + &#x27;\&#x27; of \&#x27;&#x27; + fullPath + &#x27;\&#x27;&#x27;)
+      var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld);
     }
   }
 
   /**
-   * Constructors cannot be executed with &#x27;.apply([...])&#x27; like methods, this method mocks that.
-   * (from: http://stackoverflow.com/questions/3871731/dynamic-object-construction-in-javascript)
+   * Finds a set of shapes in a row (only horizontal currently)
    * 
-   * @method applyConstruct
-   * @static
-   * @param  {Function} ctor The constructor.
-   * @param  {Array} params The parameters to apply to the constructor.
-   * @return {Object} The instatiated object.
+   * @method findNextCollisionShapeTile
+   * @protected
    */
-  Utils.applyConstruct = function(ctor, params) {
-    var obj, newobj;
+  TileLayer.prototype.findNextCollisionShapeTile = function(x,y) {
+    x = x || 0;
+    y = y || 0;
+    var tile_array_pos,tileid,currentShape;
+    tile_array_pos = y * this.numTilesX + x;
+    tileid = this.colTilesToCheck[tile_array_pos];
 
-    if (typeof Object.create === &quot;function&quot;) {
-        obj = Object.create(ctor.prototype);
-    }
-    else if ({}.__proto__) {
-        obj = {};
-        obj.__proto__ = ctor.prototype;
-        if (obj.__proto__ !== ctor.prototype) {
-            obj = makeObjectWithFakeCtor();
-        }
-    }
-    else {
-        obj = makeObjectWithFakeCtor();
-    }
+    if ( tileid != undefined &amp;&amp; tileid != 0 ) {
+      currentShape = this.colTileGroups[this.colTileGroups.length-1];
+      currentShape.tileid = currentShape.tileid || tileid;
+      if ( !Object.equals(
+        this.map.getTileProperties(tileid),
+        this.map.getTileProperties(currentShape.tileid)
+      ) ) return;
+      
+      currentShape.tiles.push({x:x,y:y,tileid:tileid});
+      this.colTilesToCheck[tile_array_pos] = undefined
 
-    obj.constructor = ctor;
-    newobj = ctor.apply(obj, params);
-
-    if (typeof newobj === &quot;object&quot;) {
-        obj = newobj;
-    }
-
-    return obj;
-
-    function makeObjectWithFakeCtor() {
-        function fakeCtor() {
-        }
-        fakeCtor.prototype = ctor.prototype;
-        return new fakeCtor();
+      this.findNextCollisionShapeTile(x+1,y);
     }
   }
-
-  scope.Utils = Utils;
-}(boxledjs));
+  
+  scope.TileLayer = TileLayer; 
+} (boxledjs));
     </pre>
 </div>
 

@@ -5,7 +5,7 @@ boxledjs.Const.scale = 32;
 
 (function (scope) {
   /**
-   * The Map represents a Tiled Map.
+   * The Map represents a Tiled Map, it is created by passing the JSON data exported from Tiled in the constructor.
    * 
    * @class Map
    * @constructor

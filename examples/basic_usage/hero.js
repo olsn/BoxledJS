@@ -48,7 +48,7 @@
   Hero.prototype.reset = function () {
     var self = this;
 
-    boxledjs.Box2DUtils.injectBox2d(this,boxledjs.Box2DUtils.RECT,50*this.scaleX,120*this.scaleY,1,0.95,0.05,false);
+    boxledjs.Box2DUtils.injectBox2d(this,boxledjs.Box2DUtils.RECT,50*this.scaleX,120*this.scaleY,1,0.95,0.05);
     this.bxd.onBodyCreated = function(body) { self.onBodyCreated(body) };
   }
 
