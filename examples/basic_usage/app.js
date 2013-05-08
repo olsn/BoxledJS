@@ -19,7 +19,7 @@
       self.loadComplete(e);
     });
     this.queue.loadManifest([
-       {id: "map", src:"assets/map.json", type:"json"},
+       {id: "map", src:"map.json", type:"json"},
        {src:"assets/tileset.png"},
        {id:"hero", src:"assets/hero.png"}
     ]);
