@@ -28,7 +28,7 @@
   p.loadComplete = function() {
     // creating the boxledjs.Map
     var mapData = JSON.parse(this.queue.getResult("map",true));
-    this.map = new boxledjs.Map(mapData,this.world);
+    this.map = new boxledjs.Map(mapData);
     this.map.viewPort.width = this.canvas.width; //optional
     this.map.viewPort.height = this.canvas.height; //optional
     this.map.centerObject = 'hero'; //optional

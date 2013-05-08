@@ -86,6 +86,11 @@
     <property name="friction" value="0.01"/>
    </properties>
   </tile>
+  <tile id="176">
+   <properties>
+    <property name="impulse" value="50"/>
+   </properties>
+  </tile>
   <tile id="196" terrain="0,0,0,0">
    <properties>
     <property name="gravityFactor" value="0"/>
@@ -104,6 +109,16 @@
   <tile id="199" terrain="0,0,0,0">
    <properties>
     <property name="gravityFactor" value="0"/>
+   </properties>
+  </tile>
+  <tile id="200">
+   <properties>
+    <property name="forceY" value="-21"/>
+   </properties>
+  </tile>
+  <tile id="201">
+   <properties>
+    <property name="forceX" value="3"/>
    </properties>
   </tile>
   <tile id="212" terrain="0,0,0,0">
@@ -126,6 +141,16 @@
     <property name="gravityFactor" value="0"/>
    </properties>
   </tile>
+  <tile id="216">
+   <properties>
+    <property name="forceY" value="2"/>
+   </properties>
+  </tile>
+  <tile id="217">
+   <properties>
+    <property name="forceX" value="-3"/>
+   </properties>
+  </tile>
   <tile id="228" terrain="0,0,0,0">
    <properties>
     <property name="gravityFactor" value="0"/>
@@ -144,6 +169,12 @@
   <tile id="231" terrain="0,0,0,0">
    <properties>
     <property name="gravityFactor" value="0"/>
+   </properties>
+  </tile>
+  <tile id="232">
+   <properties>
+    <property name="forceX" value="3"/>
+    <property name="forceY" value="-21"/>
    </properties>
   </tile>
   <tile id="244" terrain="0,0,0,0">
@@ -166,10 +197,15 @@
     <property name="gravityFactor" value="0"/>
    </properties>
   </tile>
+  <tile id="248">
+   <properties>
+    <property name="noCollision" value="true"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="background" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eJztm1FS4zAQRH3/WwG+AEsuwEYXYMkBFlcxRW/TIwko21q7P145dmTF6ZZmRgrM0zTNxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYYw7L3cDcv/EwgEZb8jgASn/04TKATtlYVmPmJ2PoeUOU7vj61xtPok0ZQPvMD37Wy/t3uCTfsTXnX1ZEPe8j6H6h17+T73cbQHsFz++tYvfWn/U/zI2FmPdbxvQst2b61bTNXmO/fM+oc2Mh4sAWsb7mz3fnTu997Mf9ANr3+LImNX8y7dT7vfdgO/bjDDWvikEzXKv5U/Pmjt7ne5Qn2Lfy42kAvbb24zL9W+d/Nw6hB8/gZysf3YvrUVtdB9BrbVRsKB2+tOILehD8Se7L/MHnWfx4HUCvtYnYoDxhX1T8UfHljjx4nT7ycU+9wHPmBuyt19q8VLS4kS9Z/MF7nt77Yi+i/556gfuMPvbWass5kmkR47KQjsqHxbMr+IV+RHu+rvzJnmNvnbYAxyxq0bte4Bj3mmiObfl9nIfxHGfzA/NyfH/0pDfnKt1Y73n6PI+KaBdk9dXemq3twyOdoyetnFtjuWfZE7xOH7mnt1ZWXpQD+5H5gHPlK2t0BY/7UmlbW4ugF0f1I/OBvWjlXKxzFSpmsa/sLe6587w4oh81H1RNxHGH8zP20Zoj+LvMDH2gN/hZ4cVR8znGI+VDNifw2rXiJRPzCDWeQV+1P8a5XcWwo4DxqOZDaBfXOA5lXqqYpuYIjo9aXp/F+ZFAfZQPoRX/JqTyb+ZlgX5q719Ev2oNeGQ/UJtsPaZ+g1dH9DXr50F8Lq77OL6pOvcsfqg1W2gV8Sp8UcdWX3i/+my1ZkfPo7baW7MRfOI8oo6ZvioPoZfqtw719zFl+oihvO9/VHpr3uyYtVNzJbzh9QWeYzuMa8HRPempeXF84v5tIR9a8SuOvL7Ac2ynOLonql5VeTdgH8Ivzi/YtlT6v4nz4Ar38jPtrdtaZGvATCO8huOaj9y21iePf/Yo23c5IplOuFeSje2e/JLtD8YcUvvpvJ5X+y5767Y2vPZGH3r21ZVf8/T5947woUAbjHFKe1Vf7K3XFn7wvndrr7C2Z5jl//DhJj4H5wrGvTPlDzU3mGyvMKuNy1TP//Ok13+8/kZv8dqR5wd7kOldI9sz4ZyerTn4GKC3Z1kPsgeZ3mrtwPVVaz8rW3PwMeC6qwyg19rU6idVL7Xqq9p+ZbbmUO9nNfLeeq3NT+oWtRdbKn3j+FfrlTPo/VU/Ik6r/7WZJ52Hef8v2mLd3Jp3e+swCllthLm1lYdxjGPftXWJ6fckiy0LKg9nOp8x/q/liYotWR62zsYYY4wxxhhjjDHGGGOMMcYYY4wxxhhjjDHGGLMdfwHEz40C
+   eJztwwEJAAAMBKHr3+qbDZZDwVVTVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/AZ7RdMQ=
   </data>
  </layer>
  <layer name="platforms" width="100" height="100">
@@ -177,39 +213,22 @@
    <property name="collisionLayer" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <objectgroup name="actors" width="100" height="100">
-  <object name="hero" type="Hero" x="608" y="356"/>
- </objectgroup>
- <layer name="more platforms" width="100" height="100">
-  <properties>
-   <property name="collisionLayer" value="true"/>
-  </properties>
-  <data encoding="base64" compression="zlib">
-   eJzt00ENwCAABEEkVQISkICE+n/xPgHkmmZGwX52DAAAAACA+552AGG2AwirHUDY7QCCP75ltwMIbzsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4McO5msCQQ==
-  </data>
- </layer>
- <objectgroup name="collision" width="100" height="100">
-  <properties>
-   <property name="collisionLayer" value="tru"/>
-  </properties>
-  <object name="forceField" x="654" y="188" width="77" height="199">
+ <objectgroup name="objects" width="100" height="100">
+  <object name="hero" type="Hero" x="117" y="1367"/>
+  <object x="608" y="1074" width="306" height="317">
    <properties>
-    <property name="forceY" value="-25"/>
+    <property name="force" value="-60"/>
+    <property name="gravityFactor" value="0"/>
    </properties>
   </object>
-  <object x="503" y="575" width="45" height="45">
+  <object x="174" y="1530" width="48" height="48">
    <properties>
-    <property name="impulse" value="10"/>
+    <property name="impulse" value="35"/>
    </properties>
    <ellipse/>
-  </object>
-  <object name="forceField" x="721" y="464" width="224" height="240">
-   <properties>
-    <property name="gravityFactor" value="0.5"/>
-   </properties>
   </object>
  </objectgroup>
 </map>

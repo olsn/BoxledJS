@@ -110,7 +110,9 @@ boxledjs.Const.scale = 32;
             dirForce.Multiply(f);
             dirForce.Multiply(body.GetMass());
             
-            body.ApplyForce(dirForce, body.GetWorldCenter());
+            if ( !isNaN(dirForce.x) && !isNaN(dirForce.y) ) {
+              body.ApplyForce(dirForce, body.GetWorldCenter());
+            }
 
             if ( ffBody.GetUserData().properties.gravityFactor != undefined ) {
               gFactors.push(parseFloat(ffBody.GetUserData().properties.gravityFactor));
@@ -120,10 +122,13 @@ boxledjs.Const.scale = 32;
           for ( c = 0, l = gFactors.length; c < l; c++ ) {
             gFactor = gFactor + gFactors[c] || gFactors[c];
           }
-          var negGrav = this.b2dWorld.GetGravity().GetNegative();
-              negGrav.Multiply(1 - (gFactor/gFactors.length));
-              negGrav.Multiply(body.GetMass());
-              body.ApplyForce(negGrav, body.GetWorldCenter());
+
+          if ( !isNaN(gFactor) ) {
+            var negGrav = this.b2dWorld.GetGravity().GetNegative();
+                negGrav.Multiply(1 - (gFactor/gFactors.length));
+                negGrav.Multiply(body.GetMass());
+                body.ApplyForce(negGrav, body.GetWorldCenter());
+              }
         }
       }
       
