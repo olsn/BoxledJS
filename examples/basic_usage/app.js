@@ -19,9 +19,10 @@
       self.loadComplete(e);
     });
     this.queue.loadManifest([
-       {id: "map", src:"map.json", type:"json"},
-       {src:"assets/tileset.png"},
-       {id:"hero", src:"assets/hero.png"}
+       {id: "map", src:"arch.json", type:"json"},
+       {src:"assets/sand_set.png"},
+       {id:"hero", src:"assets/hero.png"},
+       {id:"overlay", src:"assets/overlay.png"}
     ]);
   }
 
@@ -32,13 +33,24 @@
     this.map.viewPort.width = this.canvas.width; //optional
     this.map.viewPort.height = this.canvas.height; //optional
     this.map.centerObject = 'hero'; //optional
-    this.map.scaleX = this.map.scaleY = 1.5;
+    this.map.scaleX = this.map.scaleY = 2;
     
     this.map.addEventListener('middleField', function(e) {
       console.log('Event: ', e);
     });
 
     this.stage.addChild(this.map);
+
+    var ol = new createjs.Bitmap(this.queue.getResult('overlay'));
+    var scale = Math.max(this.canvas.width / ol.image.width, this.canvas.height / ol.image.height);
+    ol.scaleX = scale;
+    ol.scaleY = scale;
+    ol.regX = ol.image.width / 2;
+    ol.regY = ol.image.height / 2;
+    ol.x = this.canvas.width / 2;
+    ol.y = this.canvas.height / 2;
+
+    this.stage.addChild(ol);
 
     var self = this;
     document.onkeydown = function(e){ self.onKeyDown(e) };

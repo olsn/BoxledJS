@@ -124,8 +124,8 @@ var boxledjs = boxledjs || {};
       fixDef.shape.SetAsBox(widthOrRadius/scale, height/scale);
 
       sensorsDef = {};
-      sensorsDef.bottom = Box2DUtils.makeSensorDef((widthOrRadius-1)/scale, 2/scale,0,height/scale);
-      sensorsDef.top = Box2DUtils.makeSensorDef((widthOrRadius-1)/scale, 2/scale,0,-height/scale);
+      sensorsDef.bottom = Box2DUtils.makeSensorDef((widthOrRadius+2)/scale, 2/scale,0,height/scale);
+      sensorsDef.top = Box2DUtils.makeSensorDef((widthOrRadius+2)/scale, 2/scale,0,-height/scale);
       sensorsDef.right = Box2DUtils.makeSensorDef(2/scale, (height-1)/scale,widthOrRadius/scale,0);
       sensorsDef.left = Box2DUtils.makeSensorDef(2/scale, (height-1)/scale,-widthOrRadius/scale,0);
     } else if ( type == Box2DUtils.CIRCLE ) {

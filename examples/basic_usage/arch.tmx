@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="sand_set" tilewidth="32" tileheight="32">
+  <image source="assets/sand_set.png" width="512" height="512"/>
+  <tile id="16">
+   <properties>
+    <property name="noBottomCollision" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt0zsKgDAUBVF/Ufe/YqvAK1IoFr7EMzBwISIOwWlCb8zJ1ZHLpx1L2GvYW9gl7D3sI+zz4TvdR56OcuOZHjpGuY9q/deWxllPHVUd33/7iB0tdeRSRy515FJHLnXk8m8dAAAAAAAAAN5xAazEA8g=
+  </data>
+ </layer>
+ <layer name="platforms" width="50" height="50">
+  <properties>
+   <property name="collisionLayer" value="true"/>
+  </properties>
+  <data encoding="base64" compression="zlib">
+   eJzt1cENgCAMQFFWcAT2X9KrcsJEaanvJQ1X/gHaGjvp0Rd4SaWOyKlCy90RNF+0ZNEvZ7U3pCMXHbHG/2zXjpGONWb3ZfaOWU86MjfryEVHLn/tyDwAAAAAwBonfOUQEg==
+  </data>
+ </layer>
+ <layer name="nocollision platform" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztzwEJACAQwMBlMIL9Q1pC8JG7BFsBQK3XAZfsvEzkZabfXgAAAAAAAAAOVEsBOQ==
+  </data>
+ </layer>
+ <objectgroup name="actors" width="50" height="50">
+  <object name="hero" type="Hero" x="396" y="187"/>
+  <object x="1217" y="225">
+   <polygon points="0,0 191,191 -1,191"/>
+  </object>
+  <object x="1408" y="256" width="32" height="32">
+   <properties>
+    <property name="forceY" value="-23"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="top" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt07EJwDAQBEG1ohLcf3NOlRhLYHifNAMXPxt8ayTpATupo6Jl9easq3BfdlSaaUnx1pJkbEn39D870PEvu3QAAAAAAAAA57kB8Wca7w==
+  </data>
+ </layer>
+</map>
