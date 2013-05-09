@@ -75,6 +75,7 @@
                  "name":"forceField",
                  "properties":
                     {
+                     "event":"middleField",
                      "forceY":"-25"
                     },
                  "rotation":0,
@@ -348,43 +349,6 @@
                 }
             },
          "tilewidth":16
-        }, 
-        {
-         "firstgid":257,
-         "image":"assets\/twilight-tiles.png",
-         "imageheight":256,
-         "imagewidth":256,
-         "margin":0,
-         "name":"twilight-tiles",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tileheight":16,
-         "tileproperties":
-            {
-             "185":
-                {
-                 "otm":"5"
-                }
-            },
-         "tilewidth":16
-        }, 
-        {
-         "firstgid":513,
-         "image":"assets\/hero.png",
-         "imageheight":240,
-         "imagewidth":1000,
-         "margin":0,
-         "name":"hero",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tileheight":120,
-         "tilewidth":100
         }],
  "tilewidth":16,
  "version":1,

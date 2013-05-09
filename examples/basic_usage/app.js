@@ -34,6 +34,10 @@
     this.map.centerObject = 'hero'; //optional
     this.map.scaleX = this.map.scaleY = 1.5;
     
+    this.map.addEventListener('middleField', function(e) {
+      console.log('Event: ', e);
+    });
+
     this.stage.addChild(this.map);
 
     var self = this;

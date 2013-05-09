@@ -23,6 +23,7 @@ var boxledjs = boxledjs || {};
     
     this.__applyForceField(fixtureA,fixtureB,dataA,dataB,1,1,contact);
     this.__applyImpulse(fixtureA,fixtureB,dataA,dataB,contact);
+    this.__handleCustomEvents(fixtureA,fixtureB,dataA,dataB,contact,'beginContact');
   }
 
   p.EndContact = function(contact) {
@@ -40,6 +41,7 @@ var boxledjs = boxledjs || {};
     if ( dataB && dataB.objectData ) dataB = objectData;
 
     this.__applyForceField(fixtureA,fixtureB,dataA,dataB,-1,0,contact);
+    this.__handleCustomEvents(fixtureA,fixtureB,dataA,dataB,contact,'endContact');
   }
 
   p.__applyForceField = function(fixtureA,fixtureB,dataA,dataB,addOrRemove,fallBackMultiplier,contact) {
@@ -85,6 +87,22 @@ var boxledjs = boxledjs || {};
         //bodyB.ApplyImpulse(dirImpulse,bodyB.GetWorldCenter());
         bodyB.ApplyImpulse(dirImpulse,bodyB.GetWorldPoint(contact.GetManifold().m_localPoint));
       }
+    }
+  }
+
+  p.__handleCustomEvents = function(fixtureA,fixtureB,dataA,dataB,contact,status) {
+    if ( dataA && dataA.properties && dataA.properties.event ) {
+      var eventData = {
+        type: dataA.properties.event,
+        detail: {
+          status: status,
+          targetFixture: fixtureA,
+          triggeringFixture: fixtureB
+        }
+      };
+      
+      dataA.eventsToDispatch = dataA.eventsToDispatch || [];
+      dataA.eventsToDispatch.push(eventData);
     }
   }
 

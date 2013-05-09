@@ -197,6 +197,7 @@
   </properties>
   <object name="forceField" x="654" y="188" width="77" height="199">
    <properties>
+    <property name="event" value="middleField"/>
     <property name="forceY" value="-25"/>
    </properties>
   </object>

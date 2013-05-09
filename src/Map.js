@@ -15,10 +15,9 @@ boxledjs.Const.scale = 32;
   function Map(data,b2dWorld) {
     this.initialize(data,b2dWorld);
   }
-  Map.prototype = new createjs.Container();
-  
+  var p = Map.prototype = new createjs.Container();
+
   Map.prototype.Container_init = Map.prototype.initialize;
-  
   Map.prototype.initialize = function (data,b2dWorld) { 
     this.Container_init();
 
@@ -94,6 +93,14 @@ boxledjs.Const.scale = 32;
         velIter = Box2D.Dynamics.b2World.s_timestep2.velocityIterations;
     while ( body ) {
       var userData = body.GetUserData(), properties = userData?userData.properties:{};
+      if ( userData && userData.eventsToDispatch ) {
+        while ( userData.eventsToDispatch.length ) {
+          var eventData = userData.eventsToDispatch.pop();
+
+          this.dispatchEvent(eventData);
+        }
+      }
+
       if ( !properties || properties.ignoreForces != true ) {
         if ( body.o_fieldForceX || body.o_fieldForceY ) {
           body.ApplyForce(new Box2D.Common.Math.b2Vec2((body.o_fieldForceX||0)*body.GetMass(),(body.o_fieldForceY||0)*body.GetMass()),body.GetWorldCenter());
