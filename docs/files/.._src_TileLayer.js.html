@@ -140,6 +140,7 @@ boxledjs = boxledjs || {};
     this.x = this.data.x;
     this.y = this.data.y;
     this.visible = this.data.visible;
+    this.alpha = this.data.opacity != undefined ? parseFloat(this.data.opacity) : 1;
     this.numTilesX = this.data.width;
     this.numTilesY = this.data.height;
     this.isCollisionLayer = this.properties &amp;&amp; this.properties.collisionLayer &amp;&amp; this.properties.collisionLayer != &#x27;false&#x27;;
@@ -148,26 +149,35 @@ boxledjs = boxledjs || {};
       this.colTileGroups = [];
     }
 
+    this.pathfinding = {};
+
     this.drawTiles();
     this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
 
     if ( this.isCollisionLayer ) {
-      this.calculateCollisionShapes();
+      
+      // only calculate the b2dCollision Shapes if a world exists
+      if ( this.map.b2dWorld ) {
+        this.calculateCollisionShapes();
+      }
     }
   }
 
   /**
-   * Draws the actual tiles to the container.
+   * Draws the actual tiles to the container
+   * and creates a Graph-Map for pathfinding.
    *
    * @method drawTiles
    * @protected
    */
   TileLayer.prototype.drawTiles = function() {
     var tiledata = this.data.data,
-        x,y,tile_array_pos,tileid,frame,bm;
+        x,y,tile_array_pos,tileid,frame,bm,properties,open,
+        graphGrid = [], graphRow;
 
-    for ( y = 0; y &lt; this.numTilesY; y++ ) {
-      for ( x = 0; x &lt; this.numTilesX; x++ ) {
+    for ( x = 0; x &lt; this.numTilesY; x++ ) {
+      graphRow = [];
+      for ( y = 0; y &lt; this.numTilesX; y++ ) {
         tile_array_pos = y * this.numTilesX + x;
         tileid = tiledata[tile_array_pos];
         if ( tileid != 0 ) {
@@ -178,11 +188,20 @@ boxledjs = boxledjs || {};
           bm.y = y * this.map.data.tileheight;
           this.addChild(bm);
         }
+        properties = this.map.getTileProperties(tileid);
         if ( this.isCollisionLayer ) {
           this.colTilesToCheck[tile_array_pos] = tileid;
+          
+          open = !Box2DUtils.isTileCollideable(properties, tileid);
+        } else {
+          open = !properties || properties.passable != &#x27;false&#x27;;
         }
+        graphRow.push(open? GraphNodeType.OPEN : GraphNodeType.WALL);
       }
+      graphGrid.push(graphRow);
     }
+
+    this.pathfinding.graph = new Graph(graphGrid);
   }
 
   /**

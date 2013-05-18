@@ -126,10 +126,9 @@ boxledjs.Const.scale = 32;
   function Map(data,b2dWorld) {
     this.initialize(data,b2dWorld);
   }
-  Map.prototype = new createjs.Container();
-  
+  var p = Map.prototype = new createjs.Container();
+
   Map.prototype.Container_init = Map.prototype.initialize;
-  
   Map.prototype.initialize = function (data,b2dWorld) { 
     this.Container_init();
 
@@ -144,7 +143,7 @@ boxledjs.Const.scale = 32;
     this.layers = {};
     this.objects = {};
 
-    if ( !this.b2dWorld ) {
+    if ( this.b2dWorld !== false &amp;&amp; this.b2dWorld === undefined ) {
       boxledjs.Const.scale = parseFloat(this.data.properties.box2dScale)||boxledjs.Const.scale;
       this.b2dWorld = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(parseFloat(this.data.properties.forceX)||0, parseFloat(this.data.properties.forceY)||20), true);
       var ctL = new boxledjs.PlatformerContactListener();
@@ -153,6 +152,8 @@ boxledjs.Const.scale = 32;
     this.firstTick = false;
 
     this.generateTileSets();
+
+    this.pathfinding = {};
     this.setupLayers();
   }
 
@@ -174,25 +175,6 @@ boxledjs.Const.scale = 32;
   }
 
   /**
-   * Sets up the Box2D DebugDraw, this is usually done automatically by the map,
-   * but can be called from the outside to setup the DebugDraw with a different canvas.
-   * 
-   * @method setupDebugDraw
-   * @param  {HTMLCanvasElement} canvas
-   * @return {b2DebugDraw}
-   */
-  Map.prototype.setupDebugDraw = function(canvas) {
-    this.b2dDebugDraw = new Box2D.Dynamics.b2DebugDraw();
-    this.b2dDebugDraw.SetSprite(canvas.getContext(&quot;2d&quot;));
-    this.b2dDebugDraw.SetDrawScale(boxledjs.Const.scale);
-    this.b2dDebugDraw.SetFillAlpha(0.35);
-    this.b2dDebugDraw.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit | Box2D.Dynamics.b2DebugDraw.e_jointBit);
-    this.b2dWorld.SetDebugDraw(this.b2dDebugDraw);
-
-    return this.b2dDebugDraw;
-  }
-
-  /**
    * Updates the world simulation, forces and force-fields are applied,
    * this should be called on every tick before the stage updates.
    *
@@ -201,47 +183,85 @@ boxledjs.Const.scale = 32;
    * 
    */
   Map.prototype.update = function(e) {
-    var body = this.b2dWorld.GetBodyList(),
-        velIter = Box2D.Dynamics.b2World.s_timestep2.velocityIterations;
-    while ( body ) {
-      var userData = body.GetUserData(), properties = userData?userData.properties:{};
-      if ( !properties || properties.ignoreForces != true ) {
-        if ( body.o_fieldForceX || body.o_fieldForceY ) {
-          body.ApplyForce(new Box2D.Common.Math.b2Vec2((body.o_fieldForceX||0)*body.GetMass(),(body.o_fieldForceY||0)*body.GetMass()),body.GetWorldCenter());
+
+    // the b2dWorld update
+    if ( this.b2dWorld !== false &amp;&amp; this.b2dWorld !== undefined ) {
+      var body = this.b2dWorld.GetBodyList(),
+          velIter = Box2D.Dynamics.b2World.s_timestep2.velocityIterations;
+      while ( body ) {
+        var userData = body.GetUserData(), properties = userData?userData.properties:{};
+        if ( userData &amp;&amp; userData.eventsToDispatch ) {
+          while ( userData.eventsToDispatch.length ) {
+            var eventData = userData.eventsToDispatch.pop();
+
+            this.dispatchEvent(eventData);
+          }
         }
 
-        if ( body.o_dynamicForceFields &amp;&amp; body.o_dynamicForceFields.length ) {
-          var gFactors = [], gFactor;
-          for ( var c = 0, l = body.o_dynamicForceFields.length; c &lt; l; c++ ) {
-            var ffBody = body.o_dynamicForceFields[c];
-            var f = parseFloat(ffBody.GetUserData().properties.force) || 0;
-            var dirForce = new Box2D.Common.Math.b2Vec2(body.GetWorldCenter().x,body.GetWorldCenter().y);
-            dirForce.Subtract(ffBody.GetWorldCenter())
-            dirForce.Normalize();
-            dirForce.Multiply(f);
-            dirForce.Multiply(body.GetMass());
-            
-            body.ApplyForce(dirForce, body.GetWorldCenter());
+        if ( !properties || properties.ignoreForces != true ) {
+          if ( body.o_fieldForceX || body.o_fieldForceY ) {
+            body.ApplyForce(new Box2D.Common.Math.b2Vec2((body.o_fieldForceX||0)*body.GetMass(),(body.o_fieldForceY||0)*body.GetMass()),body.GetWorldCenter());
+          }
 
-            if ( ffBody.GetUserData().properties.gravityFactor != undefined ) {
-              gFactors.push(parseFloat(ffBody.GetUserData().properties.gravityFactor));
+          if ( body.o_dynamicForceFields &amp;&amp; body.o_dynamicForceFields.length ) {
+            var gFactors = [], gFactor;
+            for ( var c = 0, l = body.o_dynamicForceFields.length; c &lt; l; c++ ) {
+              var ffBody = body.o_dynamicForceFields[c];
+              var f = parseFloat(ffBody.GetUserData().properties.force) || 0;
+              var dirForce = new Box2D.Common.Math.b2Vec2(body.GetWorldCenter().x,body.GetWorldCenter().y);
+              dirForce.Subtract(ffBody.GetWorldCenter())
+              dirForce.Normalize();
+              dirForce.Multiply(f);
+              dirForce.Multiply(body.GetMass());
+              
+              if ( !isNaN(dirForce.x) &amp;&amp; !isNaN(dirForce.y) ) {
+                body.ApplyForce(dirForce, body.GetWorldCenter());
+              }
+
+              if ( ffBody.GetUserData().properties.gravityFactor != undefined ) {
+                gFactors.push(parseFloat(ffBody.GetUserData().properties.gravityFactor));
+              }
             }
-          }
 
-          for ( c = 0, l = gFactors.length; c &lt; l; c++ ) {
-            gFactor = gFactor + gFactors[c] || gFactors[c];
+            for ( c = 0, l = gFactors.length; c &lt; l; c++ ) {
+              gFactor = gFactor + gFactors[c] || gFactors[c];
+            }
+
+            if ( !isNaN(gFactor) ) {
+              var negGrav = this.b2dWorld.GetGravity().GetNegative();
+                  negGrav.Multiply(1 - (gFactor/gFactors.length));
+                  negGrav.Multiply(body.GetMass());
+                  body.ApplyForce(negGrav, body.GetWorldCenter());
+                }
           }
-          var negGrav = this.b2dWorld.GetGravity().GetNegative();
-              negGrav.Multiply(1 - (gFactor/gFactors.length));
-              negGrav.Multiply(body.GetMass());
-              body.ApplyForce(negGrav, body.GetWorldCenter());
         }
+        
+        body = body.GetNext();
       }
-      
-      body = body.GetNext();
+      this.b2dWorld.Step((e||30)/1000, 10, 10);
+      this.b2dWorld.ClearForces();
     }
-    this.b2dWorld.Step((e||30)/1000, 10, 10);
-    this.b2dWorld.ClearForces();
+  }
+
+  /**
+   * Sets up the Box2D DebugDraw, this is usually done automatically by the map,
+   * but can be called from the outside to setup the DebugDraw with a different canvas.
+   * 
+   * @method setupDebugDraw
+   * @param  {HTMLCanvasElement} canvas
+   * @return {b2DebugDraw}
+   */
+  Map.prototype.setupDebugDraw = function(canvas) {
+    if ( !this.b2dWorld ) return null;
+
+    this.b2dDebugDraw = new Box2D.Dynamics.b2DebugDraw();
+    this.b2dDebugDraw.SetSprite(canvas.getContext(&quot;2d&quot;));
+    this.b2dDebugDraw.SetDrawScale(boxledjs.Const.scale);
+    this.b2dDebugDraw.SetFillAlpha(0.35);
+    this.b2dDebugDraw.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit | Box2D.Dynamics.b2DebugDraw.e_jointBit);
+    this.b2dWorld.SetDebugDraw(this.b2dDebugDraw);
+
+    return this.b2dDebugDraw;
   }
 
   /**
@@ -254,6 +274,8 @@ boxledjs.Const.scale = 32;
    * 
    */
   Map.prototype.drawDebugData = function(alpha) {
+    if ( !this.b2dWorld ) return;
+
     alpha = alpha || 1;
     this.b2dDebugDraw.SetFillAlpha(0.35 * alpha);
     this.b2dDebugDraw.SetAlpha(1 * alpha);
@@ -272,12 +294,22 @@ boxledjs.Const.scale = 32;
    * 
    */
   Map.prototype.setupLayers = function() {
-    var c,l,layerData,layer;
+    var c,l,layerData,layer,grid = [];
     for ( c = 0, l = this.data.layers.length; c &lt; l; c++ ) {
       layerData = this.data.layers[c];
       if ( layerData.type == &#x27;tilelayer&#x27; ) {
         layer = new boxledjs.TileLayer(layerData,this);
         this.addChild(layer);
+
+        // create the combined graph for pathfinding
+        var layerGrid = layer.pathfinding.graph.input;
+        for ( var y = 0, ly = layerGrid.length; y &lt; ly; y++ ) {
+          var layerRow = layerGrid[y];
+          var row = grid[y] || []; grid[y] = row;
+          for ( var x = 0, lx = layerRow.length; x &lt; lx; x++ ) {
+            row[x] = (row[x]||1) &amp; layerRow[x];
+          }
+        }
       } else if ( layerData.type == &#x27;objectgroup&#x27; ) {
         layer = new boxledjs.ObjectLayer(layerData,this);
         this.addChild(layer);
@@ -286,6 +318,9 @@ boxledjs.Const.scale = 32;
         this.layers[layerData.name] = layer;
       }
     }
+
+    this.pathfinding.graph = new Graph(grid);
+    //console.log(this.pathfinding.graph.toString());
   }
 
   /**
@@ -325,6 +360,13 @@ boxledjs.Const.scale = 32;
 
     this.x = pw / 2;
     this.y = ph / 2;
+  }
+
+  Map.prototype.calculatePath = function(start, end, diagonal) {
+    var nodes = this.pathfinding.graph.nodes;
+    start = nodes[start.x][start.y];
+    end = nodes[end.x][end.y];
+    return astar.search(nodes, start, end, diagonal);
   }
 
   /**

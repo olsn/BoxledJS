@@ -2,11 +2,13 @@
 var compressor = require('node-minify');
 
 // docs require yuidoc: npm install -g yuidocjs
-var Y = require('yuidocjs');
+// var Y = require('yuidocjs');
 
 new compressor.minify({
     type: 'gcc',
     fileIn: [
+      '../src/astar/astar.js',
+      '../src/astar/graph.js',
       '../src/Utils.js',
       '../src/Box2DUtils.js',
       '../src/b2d/b2Separator.js',
