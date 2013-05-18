@@ -38,26 +38,35 @@ boxledjs = boxledjs || {};
       this.colTileGroups = [];
     }
 
+    this.pathfinding = {};
+
     this.drawTiles();
     this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
 
     if ( this.isCollisionLayer ) {
-      this.calculateCollisionShapes();
+      
+      // only calculate the b2dCollision Shapes if a world exists
+      if ( this.map.b2dWorld ) {
+        this.calculateCollisionShapes();
+      }
     }
   }
 
   /**
-   * Draws the actual tiles to the container.
+   * Draws the actual tiles to the container
+   * and creates a Graph-Map for pathfinding.
    *
    * @method drawTiles
    * @protected
    */
   TileLayer.prototype.drawTiles = function() {
     var tiledata = this.data.data,
-        x,y,tile_array_pos,tileid,frame,bm;
+        x,y,tile_array_pos,tileid,frame,bm,properties,open,
+        graphGrid = [], graphRow;
 
-    for ( y = 0; y < this.numTilesY; y++ ) {
-      for ( x = 0; x < this.numTilesX; x++ ) {
+    for ( x = 0; x < this.numTilesY; x++ ) {
+      graphRow = [];
+      for ( y = 0; y < this.numTilesX; y++ ) {
         tile_array_pos = y * this.numTilesX + x;
         tileid = tiledata[tile_array_pos];
         if ( tileid != 0 ) {
@@ -68,11 +77,20 @@ boxledjs = boxledjs || {};
           bm.y = y * this.map.data.tileheight;
           this.addChild(bm);
         }
+        properties = this.map.getTileProperties(tileid);
         if ( this.isCollisionLayer ) {
           this.colTilesToCheck[tile_array_pos] = tileid;
+          
+          open = !Box2DUtils.isTileCollideable(properties, tileid);
+        } else {
+          open = !properties || properties.passable != 'false';
         }
+        graphRow.push(open? GraphNodeType.OPEN : GraphNodeType.WALL);
       }
+      graphGrid.push(graphRow);
     }
+
+    this.pathfinding.graph = new Graph(graphGrid);
   }
 
   /**

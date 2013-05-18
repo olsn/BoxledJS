@@ -45,8 +45,12 @@ boxledjs = boxledjs || {};
       //if it has a type, use the type to create a custom object
       if (objectData.type && objectData.type != '') {
         object = this.makeObjectFromData(objectData);
-      } else { //else create a Box2D object from it
+      } else if ( this.map.b2dWorld ) { //else create a Box2D object from it
         object = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData,this.map.b2dWorld);
+      } else {
+        var msg = 'Couldn\'t create b2Body from objectData, because map.b2dWorld is ' +  this.map.b2dWorld;
+        console.warn && console.warn(msg, objectData);
+        continue;
       }
 
       try {
@@ -73,7 +77,6 @@ boxledjs = boxledjs || {};
           }
         }
       } catch( e ) {
-        console.log(objectData.name);
         //.. couldn't add to b2d world
       }
 

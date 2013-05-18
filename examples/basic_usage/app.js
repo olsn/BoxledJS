@@ -34,6 +34,10 @@
     this.map.viewPort.height = this.canvas.height; //optional
     this.map.centerObject = 'hero'; //optional
     this.map.scaleX = this.map.scaleY = 2;
+    var path = this.map.calculatePath({x:23,y:10},{x:10,y:6},true);
+    for ( var c = 0, l = path.length; c < l;c++ ) {
+      console.log(path[c].x,path[c].y);
+    }
     
     this.map.addEventListener('middleField', function(e) {
       console.log('Event: ', e);
@@ -57,7 +61,7 @@
     document.onkeyup = function(e){ self.onKeyUp(e) };
 
     createjs.Ticker.setFPS(30); 
-    createjs.Ticker.addListener(this); 
+    createjs.Ticker.addListener(this);
   }
 
   p.tick = function(e) {
@@ -65,7 +69,7 @@
     this.stage.update(e);
     // uncomment the line below if you want to
     // see the box2d debug-data instead
-    //this.map.drawDebugData();
+    this.map.drawDebugData();
   }
 
   // your custom listeners

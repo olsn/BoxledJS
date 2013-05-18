@@ -28,7 +28,7 @@ var boxledjs = boxledjs || {};
     fixDef.density = properties.density == undefined ? 1 : parseFloat(properties.density);
     fixDef.friction = properties.friction == undefined ? 0.5 : parseFloat(properties.friction);
     fixDef.restitution = properties.restitution == undefined ? 0.05 : parseFloat(properties.restitution);
-    fixDef.isSensor = (properties.isSensor&&properties.isSensor != 'false') || (properties.noCollision&&properties.noCollision != 'false') || properties.force || properties.forceX || properties.forceY || properties.gravityFactor != undefined;
+    fixDef.isSensor = !Box2DUtils.isTileCollideable(properties);
 
     var bodyDef = new Box2D.Dynamics.b2BodyDef();
     bodyDef.type = properties.dynamic ? Box2D.Dynamics.b2Body.b2_dynamicBody : Box2D.Dynamics.b2Body.b2_staticBody;
@@ -87,6 +87,21 @@ var boxledjs = boxledjs || {};
       x: parseFloat(pos[0]) * data.width,
       y: parseFloat(pos[1]) * data.height  
     }
+  }
+
+  Box2DUtils.isTileCollideable = function(properties,tileid) {
+    return  !( tileid == 0 )
+            && (
+              !properties
+              || !(
+                    (properties.isSensor&&properties.isSensor != 'false')
+                    || (properties.noCollision&&properties.noCollision != 'false')
+                    || properties.force
+                    || properties.forceX
+                    || properties.forceY
+                    || properties.gravityFactor != undefined
+                  )
+              );
   }
 
   /**
