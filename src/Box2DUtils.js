@@ -36,6 +36,16 @@ var boxledjs = boxledjs || {};
         b2dWidth = objectData.width/boxledjs.Const.scale/2,
         b2dHeight = objectData.height/boxledjs.Const.scale/2;
 
+    // parsing the properties for special shapes definitions
+    if ( properties.topLeft || properties.topRight || properties.bottomRight || properties.bottomLeft ) {
+      objectData.polygon = [];
+      properties.topLeft != 'none' && objectData.polygon.push(_getPosOf(properties.topLeft||'0,0',objectData));
+      properties.topRight != 'none' && objectData.polygon.push(_getPosOf(properties.topRight||'1,0',objectData));
+      properties.bottomRight != 'none' && objectData.polygon.push(_getPosOf(properties.bottomRight||'1,1',objectData));
+      properties.bottomLeft != 'none' && objectData.polygon.push(_getPosOf(properties.bottomLeft||'0,1',objectData));
+    }
+
+    // creating the shape
     if ( objectData.ellipse == true ) {
       // CIRCLE:
       fixDef.shape = new Box2D.Collision.Shapes.b2CircleShape(b2dWidth);
@@ -69,6 +79,14 @@ var boxledjs = boxledjs || {};
     body.SetPositionAndAngle(new Box2D.Common.Math.b2Vec2(objectData.x/boxledjs.Const.scale,objectData.y/boxledjs.Const.scale), (objectData.rotation||0)*Math.PI/180);
     body.SetUserData(objectData);
     return body;
+  }
+
+  function _getPosOf(pos, data) {
+    pos = pos.split(',');
+    return {
+      x: parseFloat(pos[0]) * data.width,
+      y: parseFloat(pos[1]) * data.height  
+    }
   }
 
   /**

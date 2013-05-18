@@ -3,6 +3,17 @@
 <map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="sand_set" tilewidth="32" tileheight="32">
   <image source="assets/sand_set.png" width="512" height="512"/>
+  <tile id="14">
+   <properties>
+    <property name="topRight" value="1,0.5"/>
+   </properties>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="topLeft" value="0,0.5"/>
+    <property name="topRight" value="none"/>
+   </properties>
+  </tile>
   <tile id="16">
    <properties>
     <property name="noBottomCollision" value="true"/>
@@ -14,33 +25,35 @@
    eJztmMtu2zAQRdlH2v7/XziWm2wTS0m2saXE27b5gb677bskMBc+uvEiRFYFOMCFJHI45J0X46TU5H+TLuMsY8jYZFxn7DKuYvwkY51xnLGM+Zt4vs5YZPSxpsxfxrOsu4j3Xehuw+YU82PGebz3cYYh9Deh+1Apa1ZhZwpeY3yPMTaGzhj7SFd7TzGv9yHsrGBrwHM0He3fGVYVPJbYg3zGgGz2gTcZbzPeZdzF3GCQL8TPv8Vvhfkee8sXNTwU36dp77tn4PY87X14lPE+40PGx4xPsddL8HmV8TnjS9j8mvEtbBZ7x2FT8RZ38VGcCzYVPGRHvld8fbzY/53xPeNHxs+MX2kfO+nchd6fsPW3bPJkb+sc52SMJkA51VfwuIUvtJa5K1+N0GMeChPW91gj/yq3RugdYVx7TrB1WsFjbeef0v161bfiJf+TQ29jrGtyWsEG1/q+BcsKHtdYz37E/sWepXf5zXuWn4l9iL2KcXmR7udEwXkFj12a+87PRp+yJyl3xNW5dPhmvTFe6ivivrDxGh43OEtn78xz1o2+eU7FQDUw2Dr2Dead7Os+Zh3uKnhcpr0vvSZ5l+n9kJ/17vea5yZz1nNZ9SA/FJ1tBQ/G3O8j+Yt3uHNi7rs+71b2I/cF64I9YV3BQxw8t3kHs3Y9Vw71GvajATYPrff6Yj4sKnhcYz/a9F7O/tKZHu9PxoB9+VA98OzMR+nX8NimeYwVA+5FaD/WI/sye5jnE/kxl0bsx/jX3B/bNO+TssN+63e882aPIi/mHuf1zZ53qJZq6vzGfOHnZa9lfXsvIH/WC8d7s03fj2medxqr4SGbrGve2YwB85u6vN+Y556bnT0HW8e6uajg4f4dbMz7J897yNd+n/DM9De5MscYsxoe+k1LPxPKfcaDXPzvE+b8lOa14/cU64E1T58+VK7SPI9ox3PYf+95rfPvkpWtZS+Tv3yO/U/Ph8oyze8E+pfw39XsScwX1o7XsZ+3S/NYuf9q+u5poPy+1f9ENgH5peTpWcyVb/2Po5xnHbrrmCt94zaeZUx9fRF2utDfxtlv4YeTsC2eNf8vadKkSZMmTZo0adKkSZMmTZo0adKkyePkH0LGnzE=
   </data>
  </layer>
- <layer name="platforms" width="50" height="50">
-  <properties>
-   <property name="collisionLayer" value="true"/>
-  </properties>
+ <layer name="tatoos" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJzt1cENgCAMQFFWcAT2X9KrcsJEaanvJQ1X/gHaGjvp0Rd4SaWOyKlCy90RNF+0ZNEvZ7U3pCMXHbHG/2zXjpGONWb3ZfaOWU86MjfryEVHLn/tyDwAAAAAwBonfOUQEg==
+   eJztzkENAAAIBCD7tzSCDezg3O4DCagCAOCi04Enkw4AAAAAAAAAPFmj8wHT
   </data>
  </layer>
- <layer name="nocollision platform" width="50" height="50">
+ <layer name="platforms" width="50" height="50">
   <data encoding="base64" compression="zlib">
-   eJztzwEJACAQwMBlMIL9Q1pC8JG7BFsBQK3XAZfsvEzkZabfXgAAAAAAAAAOVEsBOQ==
+   eJzt1+sJwjAUQOGsUt1AN9D9dzL5UQhB6n2Zm9LzQRCkSg42MS3lGrYTDGnHyq7YkT0iOrL9ajlLR3PUoumIuj9uddy1EcMcvr2v+Y4Ijzqexd6zda/afbf/vNerjnfx9/QyOnaRPZaO6DUR0eP9PaT3p2SOnp5Z95VmjuO1kv9Gz75rucbSI52b1Hit9czZRO9ZmftVE9WT3bHTrAnLObI34yymWRO91Tqs6FgLHWvJeI761wAAAAAAAAAwxwfO1Su6
+  </data>
+ </layer>
+ <layer name="shadows" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt1tEJwCAMBUBX6v7LiQNIQS326R34G5S8BEshzfPjQy65mect/Vo7M3JaX06dn5v1+pm8N5PuutsXfX6rkZanJnEOGHPrPxIAAAAAAFinAiajGpw=
   </data>
  </layer>
  <objectgroup name="actors" width="50" height="50">
   <object name="hero" type="Hero" x="396" y="187"/>
-  <object x="1217" y="225">
-   <polygon points="0,0 191,191 -1,191"/>
-  </object>
   <object x="1408" y="256" width="32" height="32">
    <properties>
     <property name="forceY" value="-23"/>
    </properties>
   </object>
  </objectgroup>
- <layer name="top" width="50" height="50">
+ <layer name="collision" width="50" height="50" visible="0" opacity="0.2">
+  <properties>
+   <property name="collisionLayer" value="true"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJzt07EJwDAQBEG1ohLcf3NOlRhLYHifNAMXPxt8ayTpATupo6Jl9easq3BfdlSaaUnx1pJkbEn39D870PEvu3QAAAAAAAAA57kB8Wca7w==
+   eJztlkkOgCAMAH0B+v/XqgcT4kHogi1hJmm81MaRFti2NSgTRK9HZlb0iA4Pj2haLrN43Hy5RPTVfsWh8Ki/Q+shze2ppfUp1VO679bve2Jdn7qOd67G16PfpLkjZ0LrY10PSX+O9ImYD6lPz9ko9Wj9f+kZ7DHjTy1trvTu8FXX6hO9777rW88U71wLI+6R7/pZwSMXeORiVY/MAQAAAAAAAAAAAP9wApy+Dr8=
   </data>
  </layer>
 </map>

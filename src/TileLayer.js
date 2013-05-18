@@ -29,6 +29,7 @@ boxledjs = boxledjs || {};
     this.x = this.data.x;
     this.y = this.data.y;
     this.visible = this.data.visible;
+    this.alpha = this.data.opacity != undefined ? parseFloat(this.data.opacity) : 1;
     this.numTilesX = this.data.width;
     this.numTilesY = this.data.height;
     this.isCollisionLayer = this.properties && this.properties.collisionLayer && this.properties.collisionLayer != 'false';

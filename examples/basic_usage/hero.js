@@ -59,8 +59,8 @@
   
   Hero.prototype.onTick = function () {
     this.xDir = 0; this.yDir = 0;
-    window.LEFT && !this.bxd.sensors.left && (this.xDir -= 1);
-    window.RIGHT && !this.bxd.sensors.right && (this.xDir += 1);
+    window.LEFT && true && (this.xDir -= 1);
+    window.RIGHT && true && (this.xDir += 1);
     window.UP && (this.yDir -= 1);
     window.DOWN && (this.yDir += 1);
 
