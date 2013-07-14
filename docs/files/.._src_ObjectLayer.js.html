@@ -138,7 +138,20 @@ boxledjs = boxledjs || {};
   }
 
   ObjectLayer.prototype.reset = function () {
-      this.initObjects();
+    this.initObjects();
+  }
+
+  ObjectLayer.prototype.onTick = function() {
+    if ( this.zSorting !== false ) {
+      this.sortChildren(this.compareChildY);
+    }
+  }
+  ObjectLayer.prototype.compareChildY = function(a,b) {
+    if (a.y &lt; b.y)
+       return -1;
+    if (a.y &gt; b.y)
+      return 1;
+    return 0;
   }
 
   /**
@@ -155,7 +168,7 @@ boxledjs = boxledjs || {};
       objectData = this.data.objects[c];
       //if it has a type, use the type to create a custom object
       if (objectData.type &amp;&amp; objectData.type != &#x27;&#x27;) {
-        object = this.makeObjectFromData(objectData);
+        object = ObjectLayer.makeObjectFromData(objectData);
       } else if ( this.map.b2dWorld ) { //else create a Box2D object from it
         object = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData,this.map.b2dWorld);
       } else {
@@ -202,10 +215,10 @@ boxledjs = boxledjs || {};
    * Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)
    * @param  {Object} objectData The data exported by Tiled.
    */
-  ObjectLayer.prototype.makeObjectFromData = function(objectData) {
+  ObjectLayer.makeObjectFromData = function(objectData) {
     var className,objectClass,objectParams,object,properties = objectData.properties;
 
-    className = objectData.type || properties.classDefinition;
+    className = objectData.type || properties.type || properties.classDefinition;
     objectClass = (boxledjs.Utils.getDefinitionByName(className));
 
     if ( properties.parameter &amp;&amp; properties.parameter != &#x27;&#x27; ) {
@@ -225,6 +238,10 @@ boxledjs = boxledjs || {};
 
     object.x = objectData.x;
     object.y = objectData.y;
+    if ( objectData.scaleX != undefined || properties.scaleX != undefined )
+      object.scaleX = objectData.scaleX || properties.scaleX;
+    if ( objectData.scaleY != undefined || properties.scaleY != undefined )
+      object.scaleY = objectData.scaleY || properties.scaleY;
     object.rotation = objectData.rotation;
 
     return object;

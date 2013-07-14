@@ -367,7 +367,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 261,
+            "line": 282,
             "description": "Generates the SpriteSheets from the Tiled tilesets",
             "itemtype": "method",
             "name": "generateTileSets",
@@ -377,7 +377,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 280,
+            "line": 301,
             "description": "Return the tileset-frame based on a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileById",
@@ -396,7 +396,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 294,
+            "line": 315,
             "description": "Returns the SpriteSheet for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getSpriteSheetByTileId",
@@ -415,7 +415,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 318,
+            "line": 339,
             "description": "Returns the tile-properties for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileProperties",
@@ -434,7 +434,7 @@
         },
         {
             "file": "..\\src\\ObjectLayer.js",
-            "line": 33,
+            "line": 46,
             "description": "Initializes all objects from the Tiled-map, by \"objects\" all non-tile-elements are meant. (e.g. custom Collision-shapes)\nThis is usually called on instatiation of the Layer and doesn't need to be executed from the outside.",
             "itemtype": "method",
             "name": "initObjects",
@@ -444,7 +444,7 @@
         },
         {
             "file": "..\\src\\ObjectLayer.js",
-            "line": 90,
+            "line": 103,
             "description": "Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
             "params": [
                 {
@@ -457,7 +457,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 55,
+            "line": 56,
             "description": "Draws the actual tiles to the container\nand creates a Graph-Map for pathfinding.",
             "itemtype": "method",
             "name": "drawTiles",
@@ -467,7 +467,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 96,
+            "line": 108,
             "description": "Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.",
             "itemtype": "method",
             "name": "calculateCollisionShapes",
@@ -477,7 +477,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 133,
+            "line": 146,
             "description": "Finds a set of shapes in a row (only horizontal currently)",
             "itemtype": "method",
             "name": "findNextCollisionShapeTile",
@@ -604,7 +604,7 @@
         },
         {
             "message": "Missing item type\nCreates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
-            "line": " ..\\src\\ObjectLayer.js:90"
+            "line": " ..\\src\\ObjectLayer.js:103"
         }
     ]
 }

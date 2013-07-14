@@ -41,7 +41,8 @@ boxledjs = boxledjs || {};
     this.pathfinding = {};
 
     this.drawTiles();
-    this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
+
+    this.data.properties.cached !== 'false' && this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
 
     if ( this.isCollisionLayer ) {
       
@@ -62,25 +63,36 @@ boxledjs = boxledjs || {};
   TileLayer.prototype.drawTiles = function() {
     var tiledata = this.data.data,
         x,y,tile_array_pos,tileid,frame,bm,properties,open,
-        graphGrid = [], graphRow;
+        graphGrid = [], graphRow,objectData;
 
+    this.tileObjects = [];
     for ( x = 0; x < this.numTilesY; x++ ) {
       graphRow = [];
       for ( y = 0; y < this.numTilesX; y++ ) {
         tile_array_pos = y * this.numTilesX + x;
         tileid = tiledata[tile_array_pos];
+        properties = this.map.getTileProperties(tileid);
         if ( tileid != 0 ) {
-          frame = this.map.getTileById(tileid);
-          bm = new createjs.Bitmap(frame.image);
-          bm.sourceRect = frame.rect;
+          if ( properties.type && properties.type != '' ) {
+            objectData = {};
+            objectData.properties = properties;
+            objectData.x = x;
+            objectData.y = y;
+            bm = boxledjs.ObjectLayer.makeObjectFromData(objectData);
+          } else {
+            frame = this.map.getTileById(tileid);
+            bm = new createjs.Bitmap(frame.image);
+            bm.sourceRect = frame.rect;
+          }
           bm.x = x * this.map.data.tilewidth;
           bm.y = y * this.map.data.tileheight;
           this.addChild(bm);
+
+          this.tileObjects[tile_array_pos] = bm;
         }
-        properties = this.map.getTileProperties(tileid);
+        
         if ( this.isCollisionLayer ) {
           this.colTilesToCheck[tile_array_pos] = tileid;
-          
           open = !Box2DUtils.isTileCollideable(properties, tileid);
         } else {
           open = !properties || properties.passable != 'false';
@@ -127,6 +139,7 @@ boxledjs = boxledjs || {};
       }
 
       var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld);
+      body.SetUserData(this.tileObjects[y * this.numTilesX + x]);
     }
   }
 

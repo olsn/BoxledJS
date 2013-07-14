@@ -362,11 +362,32 @@ boxledjs.Const.scale = 32;
     this.y = ph / 2;
   }
 
-  Map.prototype.calculatePath = function(start, end, diagonal) {
+  Map.prototype.calculatePath = function(start, end, diagonal, onlyJumpPoints) {
     var nodes = this.pathfinding.graph.nodes;
     start = nodes[start.x][start.y];
     end = nodes[end.x][end.y];
-    return astar.search(nodes, start, end, diagonal);
+    var path = astar.search(nodes, start, end, diagonal);
+    if ( path &amp;&amp; path.length &amp;&amp; onlyJumpPoints === true ) {
+      var quit = false,cx,cy,ccx,ccy;
+
+      for ( var c = 0; c &lt; path.length-2; c++ ) {
+        
+        quit = false;
+        while ( !quit &amp;&amp; path[c+2] ) {
+          cx = path[c].x - path[c+1].x;
+          cy = path[c].y - path[c+1].y;
+          ccx = path[c].x - path[c+2].x;
+          ccy = path[c].y - path[c+2].y;
+          if ( (ccx == 0 &amp;&amp; cx == 0) || (ccy == 0 &amp;&amp; cy == 0) ) {
+            path.splice(c+1,1);
+          } else {
+            quit = true;
+          }
+        } 
+      }
+    }
+
+    return path;
   }
 
   /**

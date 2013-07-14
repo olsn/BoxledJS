@@ -44,9 +44,13 @@ var boxledjs = boxledjs || {};
     }
 
     var body = sensor.GetBody();
-    obj = body.GetUserData();
+    var obj = body.GetUserData();
     if ( obj && obj.bxd && obj.bxd.sensors ) {
       obj.bxd.sensors[sensorPosition] += begin;
+    }
+    var objB = contactFixture.GetBody().GetUserData();
+    if ( objB && objB.onContact ) {
+      objB.onContact(obj);
     }
   }
 
