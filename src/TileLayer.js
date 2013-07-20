@@ -42,7 +42,7 @@ boxledjs = boxledjs || {};
 
     this.drawTiles();
 
-    this.data.properties.cached !== 'false' && this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
+    this.data.properties && this.data.properties.cached !== 'false' && this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
 
     if ( this.isCollisionLayer ) {
       
@@ -73,7 +73,7 @@ boxledjs = boxledjs || {};
         tileid = tiledata[tile_array_pos];
         properties = this.map.getTileProperties(tileid);
         if ( tileid != 0 ) {
-          if ( properties.type && properties.type != '' ) {
+          if ( properties && properties.type && properties.type != '' ) {
             objectData = {};
             objectData.properties = properties;
             objectData.x = x;
@@ -138,8 +138,18 @@ boxledjs = boxledjs || {};
         properties:properties
       }
 
-      var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld);
-      body.SetUserData(this.tileObjects[y * this.numTilesX + x]);
+      var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld),
+          i = y * this.numTilesX + x,
+          tileObject = this.tileObjects[i];
+      if ( tileObject ) {
+        body.SetUserData(tileObject);
+        tileObject.bxd = tileObject.bxd || {};
+        tileObject.bxd.body = body;
+        Box2DUtils.injectOnTick(tileObject);
+        if ( tileObject.onBodyCreated ) {
+          tileObject.onBodyCreated(body);
+        }
+      }
     }
   }
 

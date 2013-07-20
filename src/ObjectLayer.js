@@ -65,6 +65,12 @@ boxledjs = boxledjs || {};
         console.warn && console.warn(msg, objectData);
         continue;
       }
+      this.initObject(object, objectData);
+    }
+  }
+
+  ObjectLayer.prototype.initObject = function(object, objectData) {
+    
 
       try {
         object.isVisible && this.addChild(object);
@@ -76,28 +82,36 @@ boxledjs = boxledjs || {};
         if ( object.bxd ) {
           var body = this.map.b2dWorld.CreateBody(object.bxd.bodyDef);
           body.CreateFixture(object.bxd.fixDef);
-          body.CreateFixture(object.bxd.sensorsDef.bottom).SetUserData({sensorPosition: 'bottom'});
-          body.CreateFixture(object.bxd.sensorsDef.top).SetUserData({sensorPosition: 'top'});
-          body.CreateFixture(object.bxd.sensorsDef.right).SetUserData({sensorPosition: 'right'});
-          body.CreateFixture(object.bxd.sensorsDef.left).SetUserData({sensorPosition: 'left'});
+          if ( object.bxd.sensorsDef ) {
+            object.bxd.sensorsDef.bottom && body.CreateFixture(object.bxd.sensorsDef.bottom).SetUserData({object:object, sensorPosition: 'bottom'});
+            object.bxd.sensorsDef.top && body.CreateFixture(object.bxd.sensorsDef.top).SetUserData({object:object, sensorPosition: 'top'});
+            object.bxd.sensorsDef.right && body.CreateFixture(object.bxd.sensorsDef.right).SetUserData({object:object, sensorPosition: 'right'});
+            object.bxd.sensorsDef.left && body.CreateFixture(object.bxd.sensorsDef.left).SetUserData({object:object, sensorPosition: 'left'});
+
+            object.bxd.sensorsDef.tr && body.CreateFixture(object.bxd.sensorsDef.tr).SetUserData({object:object, sensorPosition: 'tr'});
+            object.bxd.sensorsDef.br && body.CreateFixture(object.bxd.sensorsDef.br).SetUserData({object:object, sensorPosition: 'br'});
+            object.bxd.sensorsDef.bl && body.CreateFixture(object.bxd.sensorsDef.bl).SetUserData({object:object, sensorPosition: 'bl'});
+            object.bxd.sensorsDef.tl && body.CreateFixture(object.bxd.sensorsDef.tl).SetUserData({object:object, sensorPosition: 'tl'});
+          }
           body.SetPositionAndAngle(new Box2D.Common.Math.b2Vec2(object.x/boxledjs.Const.scale,object.y/boxledjs.Const.scale), object.rotation*Math.PI/180);
           object.bxd.sensorsDef = undefined;
           object.bxd.body = body;
           body.SetUserData(object);
 
-          if ( object.bxd.onBodyCreated ) {
-            object.bxd.onBodyCreated(body);
+          if ( object.onBodyCreated ) {
+            object.onBodyCreated(body);
           }
         }
       } catch( e ) {
         //.. couldn't add to b2d world
       }
 
-      if ( objectData.name && objectData.name != '' ) {
+      object.layer = this;
+
+      if ( objectData && objectData.name && objectData.name != '' ) {
         this.objects[objectData.name] = object;
         this.map.objects[objectData.name] = object;
       }
-    }
   }
 
   /**

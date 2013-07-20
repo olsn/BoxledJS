@@ -444,7 +444,7 @@
         },
         {
             "file": "..\\src\\ObjectLayer.js",
-            "line": 103,
+            "line": 117,
             "description": "Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
             "params": [
                 {
@@ -604,7 +604,7 @@
         },
         {
             "message": "Missing item type\nCreates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
-            "line": " ..\\src\\ObjectLayer.js:103"
+            "line": " ..\\src\\ObjectLayer.js:117"
         }
     ]
 }

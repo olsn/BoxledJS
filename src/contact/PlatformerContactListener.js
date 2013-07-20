@@ -27,30 +27,41 @@ var boxledjs = boxledjs || {};
     if ( !sensor ) return;
     var contactFixture = fixtureA != sensor ? fixtureA : fixtureB;
 
-    var contactData = contactFixture.GetBody().GetUserData();
-    if ( contactData && contactData.objectData ) contactData = objectData;
+    var contactData,contactObject;
+    contactData = contactObject = contactFixture.GetBody().GetUserData();
+    if ( contactData && contactData.objectData ) contactData = contactData.objectData;
+
+    var sensorObject = sensor.GetUserData();
+    if ( sensorObject && sensorObject.object ) sensorObject = sensorObject.object;
+    if ( contactObject && contactObject.object ) contactObject = contactObject.object;
 
     if ( !sensor.GetUserData() || !sensor.GetUserData().sensorPosition )
       return;
 
+    var body = sensor.GetBody(),
+        obj = body.GetUserData(),
+        objB = contactFixture.GetBody().GetUserData();
+    if ( objB && objB.onContact ) {
+      objB.onContact(obj);
+    }
+
     // if the colliding object is a "cloud" (noBottomCollision) and
     // the sensor is either a left- or right-sensor, then don't detect it
-    var sensorPosition = sensor.GetUserData().sensorPosition;
+    var sensorPosition = ( sensor.GetUserData() && sensor.GetUserData().sensorPosition );
+    
     if ( ( contactData && contactData.properties && contactData.properties.noBottomCollision
             && ( sensorPosition == 'left' || sensorPosition == 'right' ) )
         || contactFixture.IsSensor()
+        || ( (sensorObject.ignoreCollisionsWith && sensorObject.ignoreCollisionsWith.indexOf(contactObject.type) >= 0) || (contactObject.ignoreCollisionsWith && contactObject.ignoreCollisionsWith.indexOf(sensorObject.type) >= 0) )
     ) {
       return;
     }
 
-    var body = sensor.GetBody();
-    var obj = body.GetUserData();
-    if ( obj && obj.bxd && obj.bxd.sensors ) {
-      obj.bxd.sensors[sensorPosition] += begin;
-    }
-    var objB = contactFixture.GetBody().GetUserData();
-    if ( objB && objB.onContact ) {
-      objB.onContact(obj);
+    
+    if ( obj && obj.bxd && obj.bxd.sensors && sensorPosition ) {
+      if ( obj.visible !== false && objB.visible !== false ) {
+        obj.bxd.sensors[sensorPosition] += begin;
+      }
     }
   }
 
@@ -67,6 +78,12 @@ var boxledjs = boxledjs || {};
 
     if ( dataA && dataA.objectData ) dataA = objectData;
     if ( dataB && dataB.objectData ) dataB = objectData;
+
+    if ( ( dataA.visible === false || dataB.visible === false )
+      || ( (dataA.ignoreCollisionsWith && dataA.ignoreCollisionsWith.indexOf(dataB.type) >= 0) || (dataB.ignoreCollisionsWith && dataB.ignoreCollisionsWith.indexOf(dataA.type) >= 0) ) ) {
+      contact.SetEnabled(false);
+      return;
+    }
 
     if ((dataA && dataA.properties && dataA.properties.noBottomCollision)||(dataB && dataB.properties && dataB.properties.noBottomCollision)) {
 

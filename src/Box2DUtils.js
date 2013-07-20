@@ -138,11 +138,13 @@ var boxledjs = boxledjs || {};
    * @param  {Number} [restitution=0.05] The restitution of the body, this correlated to the Box2D-physics model.
    * @param  {Boolean} [dynamic=true] Defines if the body is supposed to be a dynamic or static(non-moving) body.
    */
-  Box2DUtils.injectBox2d = function(object,type,widthOrRadius,height,density,friction,restitution,dynamic) {
+  Box2DUtils.injectBox2d = function(object,type,widthOrRadius,height,density,friction,restitution,dynamic,isSensor,sensorStyle) {
     dynamic == undefined && (dynamic = true);
+    isSensor == undefined && (isSensor = false);
+    sensorStyle = sensorStyle || 'borders';
 
     var scale = boxledjs.Const.scale = boxledjs.Const.scale || 32;
-    object.bxd = {};
+    object.bxd = object.bxd || {};
 
     widthOrRadius *= 0.5;
     height *= 0.5;
@@ -151,16 +153,27 @@ var boxledjs = boxledjs || {};
     fixDef.density = density == undefined ? 1 : density;
     fixDef.friction = friction == undefined ? 0.5 : friction;
     fixDef.restitution = restitution == undefined ? 0.05 : restitution;
+    fixDef.isSensor = isSensor;
 
     if ( type == Box2DUtils.RECT ) {
       fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
       fixDef.shape.SetAsBox(widthOrRadius/scale, height/scale);
 
-      sensorsDef = {};
-      sensorsDef.bottom = Box2DUtils.makeSensorDef((widthOrRadius+2)/scale, 2/scale,0,height/scale);
-      sensorsDef.top = Box2DUtils.makeSensorDef((widthOrRadius+2)/scale, 2/scale,0,-height/scale);
-      sensorsDef.right = Box2DUtils.makeSensorDef(2/scale, (height-1)/scale,widthOrRadius/scale,0);
-      sensorsDef.left = Box2DUtils.makeSensorDef(2/scale, (height-1)/scale,-widthOrRadius/scale,0);
+      if ( !isSensor ) {
+        sensorsDef = {};
+        if ( sensorStyle == 'borders' || sensorStyle == 'both' ) {
+          sensorsDef.bottom = Box2DUtils.makeSensorDef((widthOrRadius+2)/scale, 2/scale,0,height/scale);
+          sensorsDef.top = Box2DUtils.makeSensorDef((widthOrRadius+2)/scale, 2/scale,0,-height/scale);
+          sensorsDef.right = Box2DUtils.makeSensorDef(2/scale, (height-1)/scale,widthOrRadius/scale,0);
+          sensorsDef.left = Box2DUtils.makeSensorDef(2/scale, (height-1)/scale,-widthOrRadius/scale,0);
+        }
+        if ( sensorStyle == 'corners' || sensorStyle == 'both' ) {
+          sensorsDef.tr = Box2DUtils.makeSensorDef(2/scale, 2/scale,(widthOrRadius+2)/scale,-height/scale);
+          sensorsDef.br = Box2DUtils.makeSensorDef(2/scale, 2/scale,(widthOrRadius+2)/scale,(height+4)/scale);
+          sensorsDef.bl = Box2DUtils.makeSensorDef(2/scale, 2/scale,-(widthOrRadius+2)/scale,(height+4)/scale);
+          sensorsDef.tl = Box2DUtils.makeSensorDef(2/scale, 2/scale,-(widthOrRadius+2)/scale,-height/scale);
+        }
+      }
     } else if ( type == Box2DUtils.CIRCLE ) {
       fixDef.shape = new Box2D.Collision.Shapes.b2CircleShape(widthOrRadius*2/scale);
     } else {
@@ -168,14 +181,20 @@ var boxledjs = boxledjs || {};
     }
 
     object.bxd.fixDef = fixDef;
-    object.bxd.sensors = {bottom:0,top:0,right:0,left:0};
-    object.bxd.sensorsDef = sensorsDef;
+    if ( !isSensor ) {
+      object.bxd.sensors = {bottom:0,top:0,right:0,left:0,tr:0,br:0,bl:0,tl:0};
+      object.bxd.sensorsDef = sensorsDef;
+    }
 
     var bodyDef = new Box2D.Dynamics.b2BodyDef();
     bodyDef.type = !dynamic ? Box2D.Dynamics.b2Body.b2_staticBody : Box2D.Dynamics.b2Body.b2_dynamicBody;
 
     object.bxd.bodyDef = bodyDef;
 
+    Box2DUtils.injectOnTick(object);
+  }
+
+  Box2DUtils.injectOnTick = function(object) {
     //injecting onTick methods;
     if ( object.onTick ) {
       object.__onTick = object.onTick;
@@ -185,8 +204,8 @@ var boxledjs = boxledjs || {};
 
       if ( !this.bxd.body ) return;
       var pt = this.bxd.body.GetPosition();
-      this.x = pt.x * scale;
-      this.y = pt.y * scale;
+      this.x = pt.x * (boxledjs.Const.scale || 32);
+      this.y = pt.y * (boxledjs.Const.scale || 32);
       this.rotation = this.bxd.body.GetAngle()/Math.PI*180;
     }
   }
