@@ -255,7 +255,7 @@ var boxledjs = boxledjs || {};
     sensorStyle = sensorStyle || &#x27;borders&#x27;;
 
     var scale = boxledjs.Const.scale = boxledjs.Const.scale || 32;
-    object.bxd = {};
+    object.bxd = object.bxd || {};
 
     widthOrRadius *= 0.5;
     height *= 0.5;
@@ -302,6 +302,10 @@ var boxledjs = boxledjs || {};
 
     object.bxd.bodyDef = bodyDef;
 
+    Box2DUtils.injectOnTick(object);
+  }
+
+  Box2DUtils.injectOnTick = function(object) {
     //injecting onTick methods;
     if ( object.onTick ) {
       object.__onTick = object.onTick;
@@ -311,8 +315,18 @@ var boxledjs = boxledjs || {};
 
       if ( !this.bxd.body ) return;
       var pt = this.bxd.body.GetPosition();
-      this.x = pt.x * scale;
-      this.y = pt.y * scale;
+      if ( pt.x &lt;= -50000 || pt.y &lt;= -50000 ) {
+        var self = this;
+        self.hideTO = setTimeout(function() {self.visible = false;},50);
+      } else {
+        if ( this.hideTO ) {
+          clearTimeout(this.hideTO);
+          delete this.hideTO;
+        }
+        this.visible = true;
+      }
+      this.x = pt.x * (boxledjs.Const.scale || 32);
+      this.y = pt.y * (boxledjs.Const.scale || 32);
       this.rotation = this.bxd.body.GetAngle()/Math.PI*180;
     }
   }

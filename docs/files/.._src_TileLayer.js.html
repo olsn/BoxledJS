@@ -153,7 +153,7 @@ boxledjs = boxledjs || {};
 
     this.drawTiles();
 
-    this.data.properties.cached !== &#x27;false&#x27; &amp;&amp; this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
+    this.data.properties &amp;&amp; this.data.properties.cached !== &#x27;false&#x27; &amp;&amp; this.cache(0, 0, this.map.data.tilewidth*this.numTilesX, this.map.data.tileheight*this.numTilesY);
 
     if ( this.isCollisionLayer ) {
       
@@ -162,6 +162,37 @@ boxledjs = boxledjs || {};
         this.calculateCollisionShapes();
       }
     }
+  }
+
+  TileLayer.prototype.destroy = function() {
+    var key, obj;
+
+    this.data.properties &amp;&amp; this.data.properties.cached !== &#x27;false&#x27; &amp;&amp; this.uncache();
+
+    if ( this.parent ) this.parent.removeChild(this);
+
+    for ( key in this.objects ) {
+      obj = this.objects[key];
+      if ( obj.destroy ) obj.destroy();
+      if ( obj.parent ) {
+        obj.parent.removeChild(obj);
+        delete this.objects[key];
+      }
+    }
+    delete this.objects;
+
+    for ( key in this.children ) {
+      obj = this.children[key];
+      if ( obj.destroy ) obj.destroy();
+    }
+
+    if ( this.pathfinding &amp;&amp; this.pathfinding.graph ) {
+      this.pathfinding.graph.destroy();
+      delete this.pathfinding.graph;
+      delete this.pathfinding;
+    }
+
+    this.removeAllChildren();
   }
 
   /**
@@ -177,19 +208,21 @@ boxledjs = boxledjs || {};
         graphGrid = [], graphRow,objectData;
 
     this.tileObjects = [];
-    for ( x = 0; x &lt; this.numTilesY; x++ ) {
+    for ( x = 0; x &lt; this.numTilesX; x++ ) {
       graphRow = [];
-      for ( y = 0; y &lt; this.numTilesX; y++ ) {
+      for ( y = 0; y &lt; this.numTilesY; y++ ) {
         tile_array_pos = y * this.numTilesX + x;
         tileid = tiledata[tile_array_pos];
         properties = this.map.getTileProperties(tileid);
-        if ( tileid != 0 ) {
-          if ( properties.type &amp;&amp; properties.type != &#x27;&#x27; ) {
+        if ( tileid != 0 &amp;&amp; tileid != undefined ) {
+          if ( properties &amp;&amp; properties.type &amp;&amp; properties.type != &#x27;&#x27; ) {
             objectData = {};
             objectData.properties = properties;
             objectData.x = x;
             objectData.y = y;
             bm = boxledjs.ObjectLayer.makeObjectFromData(objectData);
+            bm.regX = this.map.data.tilewidth / 2;
+            bm.regY = this.map.data.tileheight / 2;
           } else {
             frame = this.map.getTileById(tileid);
             bm = new createjs.Bitmap(frame.image);
@@ -197,6 +230,7 @@ boxledjs = boxledjs || {};
           }
           bm.x = x * this.map.data.tilewidth;
           bm.y = y * this.map.data.tileheight;
+          bm.properties = properties;
           this.addChild(bm);
 
           this.tileObjects[tile_array_pos] = bm;
@@ -249,8 +283,20 @@ boxledjs = boxledjs || {};
         properties:properties
       }
 
-      var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld);
-      body.SetUserData(this.tileObjects[y * this.numTilesX + x]);
+      var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld),
+          i = y * this.numTilesX + x,
+          tileObject = this.tileObjects[i];
+      if ( tileObject &amp;&amp; tileObject.properties &amp;&amp; tileObject.properties.type ) {
+        body.SetUserData(tileObject);
+        tileObject.bxd = tileObject.bxd || {};
+        tileObject.bxd.body = body;
+        Box2DUtils.injectOnTick(tileObject);
+        if ( tileObject.onBodyCreated ) {
+          tileObject.onBodyCreated(body);
+        }
+      } else {
+        body.SetUserData(objectData);
+      }
     }
   }
 

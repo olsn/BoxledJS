@@ -97,19 +97,21 @@ boxledjs = boxledjs || {};
         graphGrid = [], graphRow,objectData;
 
     this.tileObjects = [];
-    for ( x = 0; x < this.numTilesY; x++ ) {
+    for ( x = 0; x < this.numTilesX; x++ ) {
       graphRow = [];
-      for ( y = 0; y < this.numTilesX; y++ ) {
+      for ( y = 0; y < this.numTilesY; y++ ) {
         tile_array_pos = y * this.numTilesX + x;
         tileid = tiledata[tile_array_pos];
         properties = this.map.getTileProperties(tileid);
-        if ( tileid != 0 ) {
+        if ( tileid != 0 && tileid != undefined ) {
           if ( properties && properties.type && properties.type != '' ) {
             objectData = {};
             objectData.properties = properties;
             objectData.x = x;
             objectData.y = y;
             bm = boxledjs.ObjectLayer.makeObjectFromData(objectData);
+            bm.regX = this.map.data.tilewidth / 2;
+            bm.regY = this.map.data.tileheight / 2;
           } else {
             frame = this.map.getTileById(tileid);
             bm = new createjs.Bitmap(frame.image);
@@ -117,6 +119,7 @@ boxledjs = boxledjs || {};
           }
           bm.x = x * this.map.data.tilewidth;
           bm.y = y * this.map.data.tileheight;
+          bm.properties = properties;
           this.addChild(bm);
 
           this.tileObjects[tile_array_pos] = bm;
@@ -172,7 +175,7 @@ boxledjs = boxledjs || {};
       var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld),
           i = y * this.numTilesX + x,
           tileObject = this.tileObjects[i];
-      if ( tileObject ) {
+      if ( tileObject && tileObject.properties && tileObject.properties.type ) {
         body.SetUserData(tileObject);
         tileObject.bxd = tileObject.bxd || {};
         tileObject.bxd.body = body;
@@ -180,6 +183,8 @@ boxledjs = boxledjs || {};
         if ( tileObject.onBodyCreated ) {
           tileObject.onBodyCreated(body);
         }
+      } else {
+        body.SetUserData(objectData);
       }
     }
   }

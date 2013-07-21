@@ -204,6 +204,16 @@ var boxledjs = boxledjs || {};
 
       if ( !this.bxd.body ) return;
       var pt = this.bxd.body.GetPosition();
+      if ( pt.x <= -50000 || pt.y <= -50000 ) {
+        var self = this;
+        self.hideTO = setTimeout(function() {self.visible = false;},50);
+      } else {
+        if ( this.hideTO ) {
+          clearTimeout(this.hideTO);
+          delete this.hideTO;
+        }
+        this.visible = true;
+      }
       this.x = pt.x * (boxledjs.Const.scale || 32);
       this.y = pt.y * (boxledjs.Const.scale || 32);
       this.rotation = this.bxd.body.GetAngle()/Math.PI*180;

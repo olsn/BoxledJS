@@ -61,6 +61,7 @@ var boxledjs = boxledjs || {};
     if ( obj && obj.bxd && obj.bxd.sensors && sensorPosition ) {
       if ( obj.visible !== false && objB.visible !== false ) {
         obj.bxd.sensors[sensorPosition] += begin;
+        obj.bxd.sensors[sensorPosition] = Math.max(obj.bxd.sensors[sensorPosition],0);
       }
     }
   }
@@ -76,8 +77,8 @@ var boxledjs = boxledjs || {};
     var dataA = fixtureA.GetBody().GetUserData(),
         dataB = fixtureB.GetBody().GetUserData();
 
-    if ( dataA && dataA.objectData ) dataA = objectData;
-    if ( dataB && dataB.objectData ) dataB = objectData;
+    if ( dataA && dataA.objectData ) dataA = dataA.objectData;
+    if ( dataB && dataB.objectData ) dataB = dataB.objectData;
 
     if ( ( dataA.visible === false || dataB.visible === false )
       || ( (dataA.ignoreCollisionsWith && dataA.ignoreCollisionsWith.indexOf(dataB.type) >= 0) || (dataB.ignoreCollisionsWith && dataB.ignoreCollisionsWith.indexOf(dataA.type) >= 0) ) ) {

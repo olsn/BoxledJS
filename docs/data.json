@@ -293,7 +293,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 66,
+            "line": 107,
             "description": "Updates the world simulation, forces and force-fields are applied,\nthis should be called on every tick before the stage updates.",
             "itemtype": "method",
             "name": "update",
@@ -308,7 +308,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 135,
+            "line": 176,
             "description": "Sets up the Box2D DebugDraw, this is usually done automatically by the map,\nbut can be called from the outside to setup the DebugDraw with a different canvas.",
             "itemtype": "method",
             "name": "setupDebugDraw",
@@ -327,7 +327,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 156,
+            "line": 197,
             "description": "Draws the Box2D DebugData to the previously setup canvas.\nThe target canvas is the same as the createjs.Stage if not\ndefined otherwise.",
             "itemtype": "method",
             "name": "drawDebugData",
@@ -342,7 +342,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 178,
+            "line": 219,
             "description": "Sets up the layers from the Tiled map",
             "itemtype": "method",
             "name": "setupLayers",
@@ -352,7 +352,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 215,
+            "line": 256,
             "description": "Centers the 'camera' to the given object, this can be either\na Box2D Body or an createjs.DisplayObject",
             "itemtype": "method",
             "name": "centerTo",
@@ -367,7 +367,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 282,
+            "line": 323,
             "description": "Generates the SpriteSheets from the Tiled tilesets",
             "itemtype": "method",
             "name": "generateTileSets",
@@ -377,7 +377,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 301,
+            "line": 342,
             "description": "Return the tileset-frame based on a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileById",
@@ -396,7 +396,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 315,
+            "line": 356,
             "description": "Returns the SpriteSheet for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getSpriteSheetByTileId",
@@ -415,7 +415,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 339,
+            "line": 380,
             "description": "Returns the tile-properties for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileProperties",
@@ -434,7 +434,7 @@
         },
         {
             "file": "..\\src\\ObjectLayer.js",
-            "line": 46,
+            "line": 69,
             "description": "Initializes all objects from the Tiled-map, by \"objects\" all non-tile-elements are meant. (e.g. custom Collision-shapes)\nThis is usually called on instatiation of the Layer and doesn't need to be executed from the outside.",
             "itemtype": "method",
             "name": "initObjects",
@@ -444,7 +444,7 @@
         },
         {
             "file": "..\\src\\ObjectLayer.js",
-            "line": 117,
+            "line": 145,
             "description": "Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
             "params": [
                 {
@@ -457,7 +457,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 56,
+            "line": 87,
             "description": "Draws the actual tiles to the container\nand creates a Graph-Map for pathfinding.",
             "itemtype": "method",
             "name": "drawTiles",
@@ -467,7 +467,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 108,
+            "line": 142,
             "description": "Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.",
             "itemtype": "method",
             "name": "calculateCollisionShapes",
@@ -477,7 +477,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 146,
+            "line": 192,
             "description": "Finds a set of shapes in a row (only horizontal currently)",
             "itemtype": "method",
             "name": "findNextCollisionShapeTile",
@@ -604,7 +604,7 @@
         },
         {
             "message": "Missing item type\nCreates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
-            "line": " ..\\src\\ObjectLayer.js:117"
+            "line": " ..\\src\\ObjectLayer.js:145"
         }
     ]
 }

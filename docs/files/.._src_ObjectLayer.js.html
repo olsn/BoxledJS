@@ -141,6 +141,29 @@ boxledjs = boxledjs || {};
     this.initObjects();
   }
 
+  ObjectLayer.prototype.destroy = function() {
+    var key, obj;
+
+    if ( this.parent ) this.parent.removeChild(this);
+
+    for ( key in this.objects ) {
+      obj = this.objects[key];
+      if ( obj.destroy ) obj.destroy();
+      if ( obj.parent ) {
+        obj.parent.removeChild(obj);
+        delete this.objects[key];
+      }
+    }
+    delete this.objects;
+
+    for ( key in this.children ) {
+      obj = this.children[key];
+      if ( obj.destroy ) obj.destroy();
+    }
+
+    this.removeAllChildren();
+  }
+
   ObjectLayer.prototype.onTick = function() {
     if ( this.zSorting !== false ) {
       this.sortChildren(this.compareChildY);
@@ -209,8 +232,8 @@ boxledjs = boxledjs || {};
           object.bxd.body = body;
           body.SetUserData(object);
 
-          if ( object.bxd.onBodyCreated ) {
-            object.bxd.onBodyCreated(body);
+          if ( object.onBodyCreated ) {
+            object.onBodyCreated(body);
           }
         }
       } catch( e ) {
@@ -222,6 +245,11 @@ boxledjs = boxledjs || {};
       if ( objectData &amp;&amp; objectData.name &amp;&amp; objectData.name != &#x27;&#x27; ) {
         this.objects[objectData.name] = object;
         this.map.objects[objectData.name] = object;
+      }
+
+      if ( objectData &amp;&amp; objectData.group &amp;&amp; objectData.group != &#x27;&#x27; ) {
+        this.map.objectGroups[objectData.group] = this.map.objectGroups[objectData.group] || [];
+        this.map.objectGroups[objectData.group].push(object);
       }
   }
 

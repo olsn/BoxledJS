@@ -18,8 +18,8 @@ var boxledjs = boxledjs || {};
     var dataA = fixtureA.GetBody().GetUserData(),
         dataB = fixtureB.GetBody().GetUserData();
 
-    if ( dataA && dataA.objectData ) dataA = objectData;
-    if ( dataB && dataB.objectData ) dataB = objectData;
+    if ( dataA && dataA.objectData ) dataA = dataA.objectData;
+    if ( dataB && dataB.objectData ) dataB = dataB.objectData;
     
     this.__applyForceField(fixtureA,fixtureB,dataA,dataB,1,1,contact);
     this.__applyImpulse(fixtureA,fixtureB,dataA,dataB,contact);
@@ -37,8 +37,8 @@ var boxledjs = boxledjs || {};
     var dataA = fixtureA.GetBody().GetUserData(),
         dataB = fixtureB.GetBody().GetUserData();
 
-    if ( dataA && dataA.objectData ) dataA = objectData;
-    if ( dataB && dataB.objectData ) dataB = objectData;
+    if ( dataA && dataA.objectData ) dataA = dataA.objectData;
+    if ( dataB && dataB.objectData ) dataB = dataB.objectData;
 
     this.__applyForceField(fixtureA,fixtureB,dataA,dataB,-1,0,contact);
     this.__handleCustomEvents(fixtureA,fixtureB,dataA,dataB,contact,'endContact');
