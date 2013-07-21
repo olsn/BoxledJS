@@ -31,6 +31,7 @@ boxledjs.Const.scale = 32;
     this.viewPort = {};
     this.layers = {};
     this.objects = {};
+    this.objectGroups = {};
 
     if ( this.b2dWorld !== false && this.b2dWorld === undefined ) {
       boxledjs.Const.scale = parseFloat(this.data.properties.box2dScale)||boxledjs.Const.scale;
@@ -44,6 +45,46 @@ boxledjs.Const.scale = 32;
 
     this.pathfinding = {};
     this.setupLayers();
+  }
+
+  Map.prototype.destroy = function() {
+    var key, obj, layer;
+
+    if ( this.b2dWorld ) {
+      var node = this.b2dWorld.GetBodyList();
+      while ( node ) {
+        var b2Body = node;
+        node = node.GetNext();
+        this.b2dWorld.DestroyBody(b2Body);
+        b2Body = null;
+      }
+
+      delete this.b2dWorld;
+    }
+
+    if ( this.parent ) this.parent.removeChild(this);
+
+    for ( key in this.objects ) {
+      obj = this.objects[key];
+      if ( obj.destroy ) obj.destroy();
+      if ( obj.parent ) {
+        obj.parent.removeChild(obj);
+        delete this.objects[key];
+      }
+    }
+
+    delete this.objects;
+
+    for ( key in this.layers ) {
+      layer = this.layers[key];
+      layer.destroy();
+    }
+
+    delete this.layers;
+
+    this.removeAllChildren();
+
+    return true;
   }
 
   Map.prototype.onTick = function(e) {

@@ -26,6 +26,11 @@ function Graph(grid) {
     this.nodes = nodes;
 }
 
+Graph.prototype.destroy = function() {
+    delete this.input;
+    delete this.nodes;
+}
+
 Graph.prototype.toString = function() {
     var graphString = "\n";
     var nodes = this.nodes;

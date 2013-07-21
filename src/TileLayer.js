@@ -53,6 +53,37 @@ boxledjs = boxledjs || {};
     }
   }
 
+  TileLayer.prototype.destroy = function() {
+    var key, obj;
+
+    this.data.properties && this.data.properties.cached !== 'false' && this.uncache();
+
+    if ( this.parent ) this.parent.removeChild(this);
+
+    for ( key in this.objects ) {
+      obj = this.objects[key];
+      if ( obj.destroy ) obj.destroy();
+      if ( obj.parent ) {
+        obj.parent.removeChild(obj);
+        delete this.objects[key];
+      }
+    }
+    delete this.objects;
+
+    for ( key in this.children ) {
+      obj = this.children[key];
+      if ( obj.destroy ) obj.destroy();
+    }
+
+    if ( this.pathfinding && this.pathfinding.graph ) {
+      this.pathfinding.graph.destroy();
+      delete this.pathfinding.graph;
+      delete this.pathfinding;
+    }
+
+    this.removeAllChildren();
+  }
+
   /**
    * Draws the actual tiles to the container
    * and creates a Graph-Map for pathfinding.

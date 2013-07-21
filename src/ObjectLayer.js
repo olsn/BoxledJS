@@ -30,6 +30,29 @@ boxledjs = boxledjs || {};
     this.initObjects();
   }
 
+  ObjectLayer.prototype.destroy = function() {
+    var key, obj;
+
+    if ( this.parent ) this.parent.removeChild(this);
+
+    for ( key in this.objects ) {
+      obj = this.objects[key];
+      if ( obj.destroy ) obj.destroy();
+      if ( obj.parent ) {
+        obj.parent.removeChild(obj);
+        delete this.objects[key];
+      }
+    }
+    delete this.objects;
+
+    for ( key in this.children ) {
+      obj = this.children[key];
+      if ( obj.destroy ) obj.destroy();
+    }
+
+    this.removeAllChildren();
+  }
+
   ObjectLayer.prototype.onTick = function() {
     if ( this.zSorting !== false ) {
       this.sortChildren(this.compareChildY);
@@ -111,6 +134,11 @@ boxledjs = boxledjs || {};
       if ( objectData && objectData.name && objectData.name != '' ) {
         this.objects[objectData.name] = object;
         this.map.objects[objectData.name] = object;
+      }
+
+      if ( objectData && objectData.group && objectData.group != '' ) {
+        this.map.objectGroups[objectData.group] = this.map.objectGroups[objectData.group] || [];
+        this.map.objectGroups[objectData.group].push(object);
       }
   }
 
