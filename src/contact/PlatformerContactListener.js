@@ -49,10 +49,13 @@ var boxledjs = boxledjs || {};
     // the sensor is either a left- or right-sensor, then don't detect it
     var sensorPosition = ( sensor.GetUserData() && sensor.GetUserData().sensorPosition );
     
+    var ignColA = sensorObject.ignoreCollisionsWith || ((sensorObject.properties&&sensorObject.properties.ignoreCollisionsWith)?sensorObject.properties.ignoreCollisionsWith:this._ea);
+    var ignColB = contactObject.ignoreCollisionsWith || ((contactObject.properties&&contactObject.properties.ignoreCollisionsWith)?contactObject.properties.ignoreCollisionsWith:this._ea);
+
     if ( ( contactData && contactData.properties && contactData.properties.noBottomCollision
             && ( sensorPosition == 'left' || sensorPosition == 'right' ) )
         || contactFixture.IsSensor()
-        || ( (sensorObject.ignoreCollisionsWith && sensorObject.ignoreCollisionsWith.indexOf(contactObject.type) >= 0) || (contactObject.ignoreCollisionsWith && contactObject.ignoreCollisionsWith.indexOf(sensorObject.type) >= 0) )
+        || ( ignColA.indexOf(contactObject.subType) >= 0 || ignColA.indexOf(contactObject.type) >= 0 || ignColB.indexOf(sensorObject.subType) >= 0 || ignColB.indexOf(sensorObject.type) >= 0 )
     ) {
       return;
     }
@@ -66,6 +69,7 @@ var boxledjs = boxledjs || {};
     }
   }
 
+  p._ea = [];
   p.super_PreSolve = p.PreSolve;
   p.PreSolve = function(contact, oldManifold) {
     this.super_PreSolve(contact, oldManifold);
@@ -80,8 +84,11 @@ var boxledjs = boxledjs || {};
     if ( dataA && dataA.objectData ) dataA = dataA.objectData;
     if ( dataB && dataB.objectData ) dataB = dataB.objectData;
 
+    var ignColA = dataA.ignoreCollisionsWith || dataA.properties.ignoreCollisionsWith || this._ea;
+    var ignColB = dataB.ignoreCollisionsWith || dataB.properties.ignoreCollisionsWith || this._ea;
+
     if ( ( dataA.visible === false || dataB.visible === false )
-      || ( (dataA.ignoreCollisionsWith && dataA.ignoreCollisionsWith.indexOf(dataB.type) >= 0) || (dataB.ignoreCollisionsWith && dataB.ignoreCollisionsWith.indexOf(dataA.type) >= 0) ) ) {
+      || ( ignColA.indexOf(dataB.subType) >= 0 || ignColA.indexOf(dataB.type) >= 0 || ignColB.indexOf(dataA.subType) >= 0 || ignColB.indexOf(dataA.type) >= 0 ) ) {
       contact.SetEnabled(false);
       return;
     }

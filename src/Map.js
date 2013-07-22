@@ -44,7 +44,11 @@ boxledjs.Const.scale = 32;
     this.generateTileSets();
 
     this.pathfinding = {};
-    this.setupLayers();
+    var self = this;
+    setTimeout(function() {
+      self.setupLayers();
+      self.initialized = true;
+    },50);
   }
 
   Map.prototype.destroy = function() {
@@ -113,6 +117,7 @@ boxledjs.Const.scale = 32;
    * 
    */
   Map.prototype.update = function(e) {
+    if ( !this.initialized ) return;
 
     // the b2dWorld update
     if ( this.b2dWorld !== false && this.b2dWorld !== undefined ) {
@@ -168,8 +173,8 @@ boxledjs.Const.scale = 32;
         
         body = body.GetNext();
       }
-      this.b2dWorld.Step((e||30)/1000, 10, 10);
-      this.b2dWorld.ClearForces();
+      this.b2dWorld && this.b2dWorld.Step((e||30)/1000, 10, 10);
+      this.b2dWorld && this.b2dWorld.ClearForces();
     }
   }
 
