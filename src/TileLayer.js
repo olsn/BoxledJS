@@ -208,7 +208,7 @@ boxledjs = boxledjs || {};
       if ( !Object.equals(
         this.map.getTileProperties(tileid),
         this.map.getTileProperties(currentShape.tileid)
-      ) ) return;
+      ) || (currentShape.tiles.length && (this.map.getTileProperties(tileid) && this.map.getTileProperties(tileid).type != undefined)) ) return;
       
       currentShape.tiles.push({x:x,y:y,tileid:tileid});
       this.colTilesToCheck[tile_array_pos] = undefined

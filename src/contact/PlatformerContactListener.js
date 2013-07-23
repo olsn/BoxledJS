@@ -86,7 +86,6 @@ var boxledjs = boxledjs || {};
 
     var ignColA = dataA.ignoreCollisionsWith || dataA.properties.ignoreCollisionsWith || this._ea;
     var ignColB = dataB.ignoreCollisionsWith || dataB.properties.ignoreCollisionsWith || this._ea;
-
     if ( ( dataA.visible === false || dataB.visible === false )
       || ( ignColA.indexOf(dataB.subType) >= 0 || ignColA.indexOf(dataB.type) >= 0 || ignColB.indexOf(dataA.subType) >= 0 || ignColB.indexOf(dataA.type) >= 0 ) ) {
       contact.SetEnabled(false);

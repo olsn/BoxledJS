@@ -293,7 +293,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 111,
+            "line": 105,
             "description": "Updates the world simulation, forces and force-fields are applied,\nthis should be called on every tick before the stage updates.",
             "itemtype": "method",
             "name": "update",
@@ -308,7 +308,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 181,
+            "line": 175,
             "description": "Sets up the Box2D DebugDraw, this is usually done automatically by the map,\nbut can be called from the outside to setup the DebugDraw with a different canvas.",
             "itemtype": "method",
             "name": "setupDebugDraw",
@@ -327,7 +327,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 202,
+            "line": 196,
             "description": "Draws the Box2D DebugData to the previously setup canvas.\nThe target canvas is the same as the createjs.Stage if not\ndefined otherwise.",
             "itemtype": "method",
             "name": "drawDebugData",
@@ -342,7 +342,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 224,
+            "line": 218,
             "description": "Sets up the layers from the Tiled map",
             "itemtype": "method",
             "name": "setupLayers",
@@ -352,7 +352,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 261,
+            "line": 255,
             "description": "Centers the 'camera' to the given object, this can be either\na Box2D Body or an createjs.DisplayObject",
             "itemtype": "method",
             "name": "centerTo",
@@ -367,7 +367,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 328,
+            "line": 322,
             "description": "Generates the SpriteSheets from the Tiled tilesets",
             "itemtype": "method",
             "name": "generateTileSets",
@@ -377,7 +377,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 347,
+            "line": 368,
             "description": "Return the tileset-frame based on a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileById",
@@ -396,7 +396,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 361,
+            "line": 382,
             "description": "Returns the SpriteSheet for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getSpriteSheetByTileId",
@@ -415,7 +415,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 385,
+            "line": 406,
             "description": "Returns the tile-properties for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileProperties",

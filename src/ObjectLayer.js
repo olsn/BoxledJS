@@ -154,7 +154,7 @@ boxledjs = boxledjs || {};
 
     if ( properties.parameter && properties.parameter != '' ) {
 
-      objectParams = JSON.parse(properties.parameter);
+      objectParams = (typeof properties.parameter == 'string' ) ? JSON.parse(properties.parameter) : properties.parameter;
       if ( typeof(objectParams) == 'object' ) {
         object = boxledjs.Utils.applyConstruct(objectClass,objectParams);
       }

@@ -32,6 +32,7 @@ boxledjs.Const.scale = 32;
     this.layers = {};
     this.objects = {};
     this.objectGroups = {};
+    this.pathfinding = {};
 
     if ( this.b2dWorld !== false && this.b2dWorld === undefined ) {
       boxledjs.Const.scale = parseFloat(this.data.properties.box2dScale)||boxledjs.Const.scale;
@@ -42,13 +43,6 @@ boxledjs.Const.scale = 32;
     this.firstTick = false;
 
     this.generateTileSets();
-
-    this.pathfinding = {};
-    var self = this;
-    setTimeout(function() {
-      self.setupLayers();
-      self.initialized = true;
-    },50);
   }
 
   Map.prototype.destroy = function() {
@@ -335,12 +329,39 @@ boxledjs.Const.scale = 32;
   Map.prototype.generateTileSets = function() {
     this.tilesets = [];
     this.tileproperties = {};
+    this.loadedSets = 0;
     for ( var c = 0, l = this.data.tilesets.length; c < l; c++ ) {
       var ss = Map.convertTileSetToSpriteSheet(this.data.tilesets[c]);
       this.tilesets.push(ss);
       for ( var key in ss.tileproperties ) {
-        this.tileproperties[key] = ss.tileproperties[key];
+        var tileProp = ss.tileproperties[key];
+        for ( var tkey in tileProp ) {
+          var prop = tileProp[tkey];
+          if ( prop.indexOf('[') == 0 ) {
+            tileProp[tkey] = JSON.parse(prop);
+          }
+        }
+        this.tileproperties[key] = tileProp;
       }
+      if (!ss.complete) {
+        var self = this;
+        ss.addEventListener("complete", function() { self.setsLoaded(); });
+      } else {
+        this.loadedSets++;
+      }
+    }
+
+    if ( this.loadedSets == l ) {
+      this.setsLoaded();
+    }
+  }
+
+  Map.prototype.setsLoaded = function() {
+    this.setsLoaded++;
+
+    if ( this.loadedSets == this.data.tilesets.length ) {
+      this.setupLayers();
+      this.initialized = true;
     }
   }
 
