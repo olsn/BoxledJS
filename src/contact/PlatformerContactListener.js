@@ -47,25 +47,32 @@ var boxledjs = boxledjs || {};
 
     // if the colliding object is a "cloud" (noBottomCollision) and
     // the sensor is either a left- or right-sensor, then don't detect it
-    var sensorPosition = ( sensor.GetUserData() && sensor.GetUserData().sensorPosition );
+    var sensorPosition = sensor.GetUserData().sensorPosition;
     
-    var ignColA = sensorObject.ignoreCollisionsWith || ((sensorObject.properties&&sensorObject.properties.ignoreCollisionsWith)?sensorObject.properties.ignoreCollisionsWith:this._ea);
-    var ignColB = contactObject.ignoreCollisionsWith || ((contactObject.properties&&contactObject.properties.ignoreCollisionsWith)?contactObject.properties.ignoreCollisionsWith:this._ea);
+    //var ignColA = sensorObject.ignoreCollisionsWith || ((sensorObject.properties&&sensorObject.properties.ignoreCollisionsWith)?sensorObject.properties.ignoreCollisionsWith:this._ea);
+    //var ignColB = contactObject.ignoreCollisionsWith || ((contactObject.properties&&contactObject.properties.ignoreCollisionsWith)?contactObject.properties.ignoreCollisionsWith:this._ea);
 
-    if ( ( contactData && contactData.properties && contactData.properties.noBottomCollision
+    if ( /*begin == 1 &&*/ ( ( contactData && contactData.properties && contactData.properties.noBottomCollision
             && ( sensorPosition == 'left' || sensorPosition == 'right' ) )
         || contactFixture.IsSensor()
-        || ( ignColA.indexOf(contactObject.subType) >= 0 || ignColA.indexOf(contactObject.type) >= 0 || ignColB.indexOf(sensorObject.subType) >= 0 || ignColB.indexOf(sensorObject.type) >= 0 )
-    ) {
+        || obj == sensor
+        || obj == objB
+        /*|| ( ignColA.indexOf(contactObject.subType) >= 0 || ignColA.indexOf(contactObject.type) >= 0 || ignColB.indexOf(sensorObject.subType) >= 0 || ignColB.indexOf(sensorObject.type) >= 0 )*/
+    ) ) {
       return;
     }
 
     
     if ( obj && obj.bxd && obj.bxd.sensors && sensorPosition ) {
-      if ( obj.visible !== false && objB.visible !== false ) {
-        obj.bxd.sensors[sensorPosition] += begin;
-        obj.bxd.sensors[sensorPosition] = Math.max(obj.bxd.sensors[sensorPosition],0);
-      }
+      //if ( obj.visible !== false && objB.visible !== false ) {
+        if ( begin == 1 && obj.bxd.sensors[sensorPosition].indexOf(contactFixture.GetBody()) == -1 ) {
+          obj.bxd.sensors[sensorPosition].push(contactFixture.GetBody());
+        } else if ( begin == -1 && obj.bxd.sensors[sensorPosition].indexOf(contactFixture.GetBody()) >= 0 ) {
+          obj.bxd.sensors[sensorPosition].splice(obj.bxd.sensors[sensorPosition].indexOf(contactFixture.GetBody()),1);
+        }
+        //obj.bxd.sensors[sensorPosition] += begin;
+        //obj.bxd.sensors[sensorPosition] = Math.max(obj.bxd.sensors[sensorPosition],0);
+      //}
     }
   }
 

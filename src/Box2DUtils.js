@@ -182,8 +182,33 @@ var boxledjs = boxledjs || {};
 
     object.bxd.fixDef = fixDef;
     if ( !isSensor ) {
-      object.bxd.sensors = {bottom:0,top:0,right:0,left:0,tr:0,br:0,bl:0,tl:0};
+      object.bxd.sensors = {bottom:[],top:[],right:[],left:[],tr:[],br:[],bl:[],tl:[]};
       object.bxd.sensorsDef = sensorsDef;
+      var ea = [];
+      object.isSensor = function(sensor) {
+        if ( !this.bxd || !this.bxd.sensors ) return false;
+        var triggers = this.bxd.sensors[sensor];
+        if ( !triggers ) return false;
+        for ( var c = 0, l = triggers.length; c < l; ++c ) {
+          trigger = triggers[c];
+          var sensorObject = trigger.GetUserData();
+          if ( sensorObject && sensorObject.object ) sensorObject = sensorObject.object;
+
+          var ignColA = sensorObject.ignoreCollisionsWith || ((sensorObject.properties&&sensorObject.properties.ignoreCollisionsWith)?sensorObject.properties.ignoreCollisionsWith:ea);
+          var ignColB = this.ignoreCollisionsWith || ((this.properties&&this.properties.ignoreCollisionsWith)?this.properties.ignoreCollisionsWith:ea);
+
+          var isIgnA = ( ignColA.indexOf(this.subType) >= 0 || ignColA.indexOf(this.type) >= 0 );
+          var isIgnB = ( ignColB.indexOf(sensorObject.subType) >= 0 || ignColB.indexOf(sensorObject.type) >= 0 );
+
+          if ( isIgnA || isIgnB || this.visible == false || sensorObject.visible == false ) {
+          } else {
+            //console.log(sensor,isIgnA,isIgnB);
+            return true;
+          }
+        }
+
+        return false;
+      }
     }
 
     var bodyDef = new Box2D.Dynamics.b2BodyDef();
