@@ -42,12 +42,12 @@ var boxledjs = boxledjs || {};
         obj = body.GetUserData(),
         objB = contactFixture.GetBody().GetUserData();
     if ( objB && objB.onContact ) {
-      objB.onContact(obj);
+      objB.onContact(obj,begin==1);
     }
 
     // if the colliding object is a "cloud" (noBottomCollision) and
     // the sensor is either a left- or right-sensor, then don't detect it
-    var sensorPosition = sensor.GetUserData().sensorPosition;
+    var sensorPosition = ( sensor.GetUserData() && sensor.GetUserData().sensorPosition );
     
     //var ignColA = sensorObject.ignoreCollisionsWith || ((sensorObject.properties&&sensorObject.properties.ignoreCollisionsWith)?sensorObject.properties.ignoreCollisionsWith:this._ea);
     //var ignColB = contactObject.ignoreCollisionsWith || ((contactObject.properties&&contactObject.properties.ignoreCollisionsWith)?contactObject.properties.ignoreCollisionsWith:this._ea);

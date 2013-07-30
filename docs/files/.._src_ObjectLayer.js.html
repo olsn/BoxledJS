@@ -204,7 +204,7 @@ boxledjs = boxledjs || {};
   }
 
   ObjectLayer.prototype.initObject = function(object, objectData) {
-    
+      var bodyCreated = false;
 
       try {
         object.isVisible &amp;&amp; this.addChild(object);
@@ -232,9 +232,7 @@ boxledjs = boxledjs || {};
           object.bxd.body = body;
           body.SetUserData(object);
 
-          if ( object.onBodyCreated ) {
-            object.onBodyCreated(body);
-          }
+          bodyCreated = true;
         }
       } catch( e ) {
         //.. couldn&#x27;t add to b2d world
@@ -250,6 +248,10 @@ boxledjs = boxledjs || {};
       if ( objectData &amp;&amp; objectData.group &amp;&amp; objectData.group != &#x27;&#x27; ) {
         this.map.objectGroups[objectData.group] = this.map.objectGroups[objectData.group] || [];
         this.map.objectGroups[objectData.group].push(object);
+      }
+
+      if ( bodyCreated &amp;&amp; object.onBodyCreated ) {
+        object.onBodyCreated(body);
       }
   }
 

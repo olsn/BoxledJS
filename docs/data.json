@@ -352,7 +352,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 255,
+            "line": 265,
             "description": "Centers the 'camera' to the given object, this can be either\na Box2D Body or an createjs.DisplayObject",
             "itemtype": "method",
             "name": "centerTo",
@@ -367,7 +367,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 322,
+            "line": 332,
             "description": "Generates the SpriteSheets from the Tiled tilesets",
             "itemtype": "method",
             "name": "generateTileSets",
@@ -377,7 +377,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 368,
+            "line": 378,
             "description": "Return the tileset-frame based on a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileById",
@@ -396,7 +396,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 382,
+            "line": 392,
             "description": "Returns the SpriteSheet for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getSpriteSheetByTileId",
@@ -415,7 +415,7 @@
         },
         {
             "file": "..\\src\\Map.js",
-            "line": 406,
+            "line": 416,
             "description": "Returns the tile-properties for a given Tiled tileid.\nNote: Tiled tileids are 1-based, createjs.SpriteSheet-frames are 0-based.\nThis methods requires 1-based tileids.",
             "itemtype": "method",
             "name": "getTileProperties",
@@ -444,7 +444,7 @@
         },
         {
             "file": "..\\src\\ObjectLayer.js",
-            "line": 145,
+            "line": 147,
             "description": "Creates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
             "params": [
                 {
@@ -467,7 +467,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 142,
+            "line": 144,
             "description": "Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.",
             "itemtype": "method",
             "name": "calculateCollisionShapes",
@@ -477,7 +477,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 192,
+            "line": 194,
             "description": "Finds a set of shapes in a row (only horizontal currently)",
             "itemtype": "method",
             "name": "findNextCollisionShapeTile",
@@ -604,7 +604,7 @@
         },
         {
             "message": "Missing item type\nCreates a useable object from an object defined in Tiled. (e.g. an instance of the defined class)",
-            "line": " ..\\src\\ObjectLayer.js:145"
+            "line": " ..\\src\\ObjectLayer.js:147"
         }
     ]
 }

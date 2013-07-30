@@ -239,12 +239,22 @@ boxledjs.Const.scale = 32;
             row[x] = (row[x]||1) & layerRow[x];
           }
         }
-      } else if ( layerData.type == 'objectgroup' ) {
+
+        if ( layerData.name && layerData.name != '' ) {
+          this.layers[layerData.name] = layer;
+        }
+      }
+    }
+
+    for ( c = 0, l = this.data.layers.length; c < l; c++ ) {
+      layerData = this.data.layers[c];
+      if ( layerData.type == 'objectgroup' ) {
         layer = new boxledjs.ObjectLayer(layerData,this);
         this.addChild(layer);
-      }
-      if ( layerData.name && layerData.name != '' ) {
-        this.layers[layerData.name] = layer;
+
+        if ( layerData.name && layerData.name != '' ) {
+          this.layers[layerData.name] = layer;
+        }
       }
     }
 

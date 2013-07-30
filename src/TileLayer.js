@@ -116,9 +116,11 @@ boxledjs = boxledjs || {};
             frame = this.map.getTileById(tileid);
             bm = new createjs.Bitmap(frame.image);
             bm.sourceRect = frame.rect;
+            bm.regX = this.map.data.tilewidth * 0.5;
+            bm.regY = this.map.data.tileheight * 0.5;
           }
-          bm.x = x * this.map.data.tilewidth;
-          bm.y = y * this.map.data.tileheight;
+          bm.x = x * this.map.data.tilewidth + this.map.data.tilewidth * 0.5;
+          bm.y = y * this.map.data.tileheight + this.map.data.tileheight * 0.5;
           bm.properties = properties;
           this.addChild(bm);
 
