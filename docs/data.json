@@ -467,7 +467,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 144,
+            "line": 189,
             "description": "Calculates the collision shapes, if the layer was marked as a collisionLayer in Tiled.",
             "itemtype": "method",
             "name": "calculateCollisionShapes",
@@ -477,7 +477,7 @@
         },
         {
             "file": "..\\src\\TileLayer.js",
-            "line": 194,
+            "line": 239,
             "description": "Finds a set of shapes in a row (only horizontal currently)",
             "itemtype": "method",
             "name": "findNextCollisionShapeTile",

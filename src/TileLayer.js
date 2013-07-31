@@ -122,6 +122,51 @@ boxledjs = boxledjs || {};
           bm.x = x * this.map.data.tilewidth + this.map.data.tilewidth * 0.5;
           bm.y = y * this.map.data.tileheight + this.map.data.tileheight * 0.5;
           bm.properties = properties;
+
+          //if ( !bm.updateVisibility ) {
+          //bm.triggered = 1;
+            bm.updateVisibility = function(delay) {
+              var newVis;
+              delay = delay || 1;
+              var color = window.color || 0, self = this;
+              if ( ( this.color != 7 || this.triggered <= 0 ) && this.bxd ) {
+                //if ( (this.color & color) == 0 ) {
+                if ( (this.color | color) != color || this.triggered <= 0 ) {
+                //if ( this.color != color ) {
+                  newVis = false;
+                  if ( this.currentVis == newVis ) return false;
+
+                  if ( this.ox == undefined ) {
+                    this.ox = this.bxd.body.GetPosition().x;
+                    this.oy = this.bxd.body.GetPosition().y;
+                  }
+                  
+                  setTimeout(function() {
+                    self.bxd.body.SetPosition(new Box2D.Common.Math.b2Vec2(-50000,-50000));
+                    //self.visible = false;
+                  },delay);
+                } else {
+                  newVis = true;
+                  if ( this.currentVis == newVis ) return false;
+
+                  this.ox != undefined && setTimeout(function() { self.bxd.body.SetPosition(new Box2D.Common.Math.b2Vec2(self.ox,self.oy)); },delay);
+                }
+              } else {
+                newVis = true;
+                if ( this.currentVis == newVis ) return false;
+
+                this.ox != undefined && setTimeout(function() { self.bxd.body.SetPosition(new Box2D.Common.Math.b2Vec2(self.ox,self.oy)); },delay);
+              }
+
+              if ( newVis != this.currentVis ) {
+                this.currentVis = newVis;
+                return true
+              }
+
+              return false;
+            }
+          //}
+
           this.addChild(bm);
 
           this.tileObjects[tile_array_pos] = bm;
@@ -177,7 +222,7 @@ boxledjs = boxledjs || {};
       var body = boxledjs.Box2DUtils.makeB2DBodyFromData(objectData, this.map.b2dWorld),
           i = y * this.numTilesX + x,
           tileObject = this.tileObjects[i];
-      if ( tileObject && tileObject.properties && tileObject.properties.type ) {
+      if ( tileObject /*&& tileObject.properties && tileObject.properties.type*/ ) {
         body.SetUserData(tileObject);
         tileObject.bxd = tileObject.bxd || {};
         tileObject.bxd.body = body;
@@ -210,7 +255,7 @@ boxledjs = boxledjs || {};
       if ( !Object.equals(
         this.map.getTileProperties(tileid),
         this.map.getTileProperties(currentShape.tileid)
-      ) || (currentShape.tiles.length && (this.map.getTileProperties(tileid) && this.map.getTileProperties(tileid).type != undefined)) ) return;
+      ) || (currentShape.tiles.length && (this.map.getTileProperties(tileid) && this.map.getTileProperties(tileid).type != undefined)) || currentShape.tiles.length ) return;
       
       currentShape.tiles.push({x:x,y:y,tileid:tileid});
       this.colTilesToCheck[tile_array_pos] = undefined
